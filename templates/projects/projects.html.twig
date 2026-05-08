@@ -1,0 +1,250 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Projets
+{% endblock %}
+
+{% block body %}
+	<main class="main projects-main">
+		<section class="page-hero">
+			<div class="container">
+				<h1 class="page-title fade-up">Mes Projets</h1>
+				<p class="page-subtitle fade-up delay-200">Une sélection de mes réalisations récentes</p>
+			</div>
+		</section>
+
+		<!-- Filters Section -->
+		<section class="filters-section">
+			<div class="container">
+				<div class="filters-wrapper fade-up delay-200">
+					<div class="filter-group">
+						<label for="typeFilter" class="filter-label">
+							<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M19 3H5C3.58579 3 2.87868 3 2.43934 3.4122C2 3.8244 2 4.48782 2 5.81466V6.50448C2 7.54232 2 8.06124 2.2596 8.49142C2.5192 8.9216 2.99347 9.18858 3.94202 9.72255L6.85504 11.3624C7.49146 11.7206 7.80967 11.8998 8.03751 12.0976C8.51199 12.5095 8.80408 12.9935 8.93644 13.5872C9 13.8722 9 14.2058 9 14.8729L9 17.5424C9 18.452 9 18.9067 9.25192 19.2613C9.50385 19.6158 9.95128 19.7907 10.8462 20.1406C12.7248 20.875 13.6641 21.2422 14.3321 20.8244C15 20.4066 15 19.4519 15 17.5424V14.8729C15 14.2058 15 13.8722 15.0636 13.5872C15.1959 12.9935 15.488 12.5095 15.9625 12.0976C16.1903 11.8998 16.5085 11.7206 17.145 11.3624L20.058 9.72255C21.0065 9.18858 21.4808 8.9216 21.7404 8.49142C22 8.06124 22 7.54232 22 6.50448V5.81466C22 4.48782 22 3.8244 21.5607 3.4122C21.1213 3 20.4142 3 19 3Z" fill="currentColor"/>
+							</svg>
+							Type
+						</label>
+						<select id="typeFilter" class="filter-select">
+							<option value="all">Tous</option>
+							<option value="app-web">Application Web</option>
+							<option value="app-mobile">Application Mobile</option>
+							<option value="app-desktop">Application Desktop</option>
+							<option value="architecture-reseaux">Architecture Réseaux</option>
+							<option value="infrastructure">Infrastructure</option>
+							<option value="cybersecurite">Cybersécurité</option>
+							<option value="data-science">Data Science</option>
+							<option value="autre">Autre</option>
+						</select>
+					</div>
+
+					<div class="filter-group">
+						<label for="categoryFilter" class="filter-label">
+							<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M3 6C3 4.58579 3 3.87868 3.43934 3.43934C3.87868 3 4.58579 3 6 3C7.41421 3 8.12132 3 8.56066 3.43934C9 3.87868 9 4.58579 9 6C9 7.41421 9 8.12132 8.56066 8.56066C8.12132 9 7.41421 9 6 9C4.58579 9 3.87868 9 3.43934 8.56066C3 8.12132 3 7.41421 3 6Z" fill="currentColor"/>
+								<path d="M3 18C3 16.5858 3 15.8787 3.43934 15.4393C3.87868 15 4.58579 15 6 15C7.41421 15 8.12132 15 8.56066 15.4393C9 15.8787 9 16.5858 9 18C9 19.4142 9 20.1213 8.56066 20.5607C8.12132 21 7.41421 21 6 21C4.58579 21 3.87868 21 3.43934 20.5607C3 20.1213 3 19.4142 3 18Z" fill="currentColor"/>
+								<path d="M15 6C15 4.58579 15 3.87868 15.4393 3.43934C15.8787 3 16.5858 3 18 3C19.4142 3 20.1213 3 20.5607 3.43934C21 3.87868 21 4.58579 21 6C21 7.41421 21 8.12132 20.5607 8.56066C20.1213 9 19.4142 9 18 9C16.5858 9 15.8787 9 15.4393 8.56066C15 8.12132 15 7.41421 15 6Z" fill="currentColor"/>
+								<path d="M15 18C15 16.5858 15 15.8787 15.4393 15.4393C15.8787 15 16.5858 15 18 15C19.4142 15 20.1213 15 20.5607 15.4393C21 15.8787 21 16.5858 21 18C21 19.4142 21 20.1213 20.5607 20.5607C20.1213 21 19.4142 21 18 21C16.5858 21 15.8787 21 15.4393 20.5607C15 20.1213 15 19.4142 15 18Z" fill="currentColor"/>
+							</svg>
+							Catégorie
+						</label>
+						<select id="categoryFilter" class="filter-select">
+							<option value="all">Toutes</option>
+							<option value="formation">Projets dans le cadre de la formation</option>
+							<option value="professionnel">Projets dans le cadre professionnel</option>
+						</select>
+					</div>
+
+					<div class="filter-group">
+						<label for="yearFilter" class="filter-label">
+							<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M22 14V12C22 11.161 22 10.4153 21.9871 9.75H2.0129C2 10.4153 2 11.161 2 12V14C2 17.7712 2 19.6569 3.17157 20.8284C4.34315 22 6.22876 22 10 22H14C17.7712 22 19.6569 22 20.8284 20.8284C22 19.6569 22 17.7712 22 14Z" fill="currentColor"/>
+								<path d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z" fill="currentColor"/>
+							</svg>
+							Année
+						</label>
+						<select id="yearFilter" class="filter-select">
+							<option value="all">Toutes</option>
+						</select>
+					</div>
+
+					<button id="resetFilters" class="btn btn-primary btn-large btn-block" style="display: none;">
+						<svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M1 4v6h6"/>
+							<path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+						</svg>
+						Réinitialiser
+					</button>
+				</div>
+
+				<div class="results-count fade-up delay-200">
+					<span id="resultsCount">0</span>
+					résultat(s)
+				</div>
+			</div>
+		</section>
+
+		<section class="projects-section">
+			<div class="container">
+				{% if projects|length > 0 %}
+					<div id="noResults" class="no-results" style="display: none;">
+						<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+							<line x1="8" y1="11" x2="14" y2="11"/>
+						</svg>
+						<p>Aucun projet ne correspond à vos critères</p>
+					</div>
+					<div class="projects-grid" id="projectsGrid">
+						{% for project in projects %}
+							<article class="project-card fade-up delay-{{ loop.index * 200 }}" data-project-id="{{ project.id }}" data-type="{{ project.type|default('') }}" data-category="{{ project.category|default('') }}" data-year="{{ project.startDate ? project.startDate|date('Y') : '' }}">
+								<div class="project-image">
+									{% if project.image %}
+										<img src="{{ asset('uploads/' ~ project.image) }}" alt="{{ project.title }}">
+									{% else %}
+										<div class="project-placeholder">
+											<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+												<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+												<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+												<line x1="12" y1="22.08" x2="12" y2="12"></line>
+											</svg>
+										</div>
+									{% endif %}
+								</div>
+								<div class="project-content">
+									<h3 class="project-title">{{ project.title }}</h3>
+									<p class="project-description">
+										{{ project.shortDescription }}
+									</p>
+									<div class="project-tags">
+										{% for tech in project.technologies %}
+											<span class="project-tag">
+												{% if tech.icon %}
+													<img src="{{ asset('assets/tech-icons/' ~ tech.icon) }}" alt="{{ tech.name }}" style="width: 16px; height: 16px; margin-right: 4px;">
+												{% endif %}
+												{{ tech.name }}
+											</span>
+										{% endfor %}
+									</div>
+									<div class="project-links">
+										<button class="btn btn-primary btn-large btn-block" data-project-id="{{ project.id }}">
+											<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+												<circle cx="12" cy="12" r="3"></circle>
+											</svg>
+											Consulter le projet
+										</button>
+										{% if project.liveUrl %}
+											<a href="{{ project.liveUrl }}" class="project-link" target="_blank" rel="noopener noreferrer">
+												<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+													<polyline points="15 3 21 3 21 9"></polyline>
+													<line x1="10" y1="14" x2="21" y2="3"></line>
+												</svg>
+												Voir le site
+											</a>
+										{% endif %}
+										{% if project.githubUrl %}
+											<a href="{{ project.githubUrl }}" class="project-link" target="_blank" rel="noopener noreferrer">
+												<svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+													<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+												</svg>
+												GitHub
+											</a>
+										{% endif %}
+									</div>
+								</div>
+							</article>
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="empty-state fade-up">
+						<svg width="80" height="80" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+							<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+							<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+							<line x1="12" y1="22.08" x2="12" y2="12"></line>
+						</svg>
+						<h3>Aucun projet pour le moment</h3>
+						<p>Revenez bientôt pour découvrir mes réalisations !</p>
+					</div>
+				{% endif %}
+			</div>
+		</section>
+	</main>
+	<!-- Project Modal -->
+	<div class="project-modal" id="projectModal">
+		<div class="project-modal-overlay"></div>
+		<div class="project-modal-content">
+			<button class="project-modal-close" id="closeModal" aria-label="Fermer">
+				<svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="18" y1="6" x2="6" y2="18"></line>
+					<line x1="6" y1="6" x2="18" y2="18"></line>
+				</svg>
+			</button>
+
+			<div class="project-modal-inner" id="projectModalInner"></div>
+		</div>
+	</div>
+
+	<!-- PDF Preview Modal -->
+	<div class="pdf-modal" id="pdfModal">
+		<div class="pdf-modal-overlay"></div>
+		<div class="pdf-modal-content">
+			<div class="pdf-modal-header">
+				<h3 id="pdfModalTitle">Aperçu du document</h3>
+				<div class="pdf-controls">
+					<button id="pdfPrevPage" class="pdf-control-btn" title="Page précédente">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="15 18 9 12 15 6"/>
+						</svg>
+					</button>
+					<span id="pdfPageInfo" class="pdf-page-info">1 / 1</span>
+					<button id="pdfNextPage" class="pdf-control-btn" title="Page suivante">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="9 18 15 12 9 6"/>
+						</svg>
+					</button>
+					<button id="pdfZoomOut" class="pdf-control-btn" title="Zoom arrière">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="8" y1="11" x2="14" y2="11"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+						</svg>
+					</button>
+					<button id="pdfZoomIn" class="pdf-control-btn" title="Zoom avant">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="11" y1="8" x2="11" y2="14"/>
+							<line x1="8" y1="11" x2="14" y2="11"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+						</svg>
+					</button>
+				</div>
+				<button class="pdf-modal-close" id="closePdfModal">
+					<svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+			<div class="pdf-modal-body">
+				<div id="pdfLoader" class="pdf-loader">
+					<div class="loader-spinner"></div>
+					<p>Chargement du document...</p>
+				</div>
+				<canvas id="pdfCanvas"></canvas>
+				<div id="imagePreviewContainer" class="image-preview-container" style="display: none; width: 100%; height: 100%; overflow: auto; text-align: center;">
+					<img id="imagePreview" src="" alt="Aperçu" style="max-width: 100%; height: auto; box-shadow: var(--shadow-xl);">
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script src="/assets/scripts/pdf.js"></script>
+	<script nonce="{{ csp_nonce() }}">
+		if (typeof pdfjsLib !== 'undefined') {
+			pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/scripts/pdf.worker.min.js';
+		}
+	</script>
+	<script nonce="{{ csp_nonce() }}" src="{{ asset('assets/scripts/projects-filters.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Technologies{% endblock %}
+
+{% block body %}
+	<div class="admin-header">
+		<div>
+			<h1 class="admin-page-title">Technologies</h1>
+			<p class="admin-page-subtitle">Gérez les technologies disponibles pour vos projets</p>
+		</div>
+		<a href="{{ path('admin_technology_new') }}" class="btn btn-primary">
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="12" y1="5" x2="12" y2="19"></line>
+				<line x1="5" y1="12" x2="19" y2="12"></line>
+			</svg>
+			Nouvelle technologie
+		</a>
+	</div>
+	<div class="admin-section">
+		{% if technologies|length == 0 %}
+			<div class="admin-empty-state">
+				<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+					<path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+				</svg>
+				<h3>Aucune technologie</h3>
+				<p>Commencez par ajouter votre première technologie à utiliser dans vos projets.</p>
+				<a href="{{ path('admin_technology_new') }}" class="btn btn-primary">Ajouter une technologie</a>
+			</div>
+		{% else %}
+			<div class="admin-table-container">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							<th>Icône</th>
+							<th>Nom</th>
+							<th>Slug</th>
+							<th>Ordre</th>
+							<th>Projets</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for technology in technologies %}
+							<tr id="technology-{{ technology.id }}">
+								<td>
+									{% if technology.icon %}
+										<img src="{{ asset('assets/tech-icons/' ~ technology.icon) }}" alt="{{ technology.name }}" style="width: 32px; height: 32px; object-fit: contain;">
+									{% else %}
+										<div style="width: 32px; height: 32px; background: var(--admin-border); border-radius: 4px;"></div>
+									{% endif %}
+								</td>
+								<td>
+									<strong>{{ technology.name }}</strong>
+								</td>
+								<td>
+									<code>{{ technology.slug }}</code>
+								</td>
+								<td>{{ technology.displayOrder }}</td>
+								<td>
+									<span class="admin-badge">{{ technology.projects|length }} projet(s)</span>
+								</td>
+								<td>
+									<div class="admin-table-actions">
+										<a href="{{ path('admin_technology_edit', {id: technology.id}) }}" class="admin-table-action" title="Modifier">
+											<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+												<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+											</svg>
+										</a>
+										<button
+											type="button"
+											class="admin-table-action admin-table-action-danger delete-technology-btn"
+											data-technology-id="{{ technology.id }}"
+											data-technology-name="{{ technology.name }}"
+											title="Supprimer">
+											<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<polyline points="3 6 5 6 21 6"></polyline>
+												<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+											</svg>
+										</button>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script nonce="{{ csp_nonce() }}">
+	document.addEventListener('DOMContentLoaded', function() {
+		const deleteButtons = document.querySelectorAll('.delete-technology-btn');
+		deleteButtons.forEach(function(button) {
+			button.addEventListener('click', async function() {
+				const id = this.dataset.technologyId;
+				const name = this.dataset.technologyName;
+				if (!confirm(`Voulez-vous vraiment supprimer la technologie "${name}" ?`)) return;
+				try {
+					const response = await fetch(`/admin/technologies/${id}/delete`, {method: 'POST'});
+					if (response.ok) {
+						const row = document.getElementById(`technology-${id}`);
+						if (row) row.remove();
+					} else {
+						alert('Erreur lors de la suppression.');
+					}
+				} catch (error) {
+					alert('Erreur lors de la suppression.');
+				}
+			});
+		});
+	});
+	</script>
+{% endblock %}

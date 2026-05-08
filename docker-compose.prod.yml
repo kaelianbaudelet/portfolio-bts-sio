@@ -1,0 +1,36 @@
+services:
+  php:
+    build:
+      context: .
+      target: frankenphp_prod
+    restart: always
+    environment:
+      SERVER_NAME: :80
+      DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD:-portfolio}@database:5432/${POSTGRES_DB:-portfolio}?serverVersion=${POSTGRES_VERSION:-16}&charset=utf8
+      APP_SECRET: ${APP_SECRET}
+      APP_ENV: prod
+      APP_DEBUG: 0
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio}
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.1,REMOTE_ADDR}
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:-^portfolio-bts-sio\.kaelian\.dev$|localhost|127\.0\.0\.1}
+    depends_on:
+      - database
+    ports:
+      - "1313:80"
+
+  database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio}
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "1311:5432"
+
+volumes:
+  db_data:

@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compétences BTS SIO
+{% endblock %}
+
+{% block body %}
+<main class="main">
+	<section class="page-hero">
+		<div class="container">
+			<h1 class="page-title fade-up">Compétences BTS SIO</h1>
+			<p class="page-subtitle fade-up delay-200">Compétences du référentiel BTS SIO mobilisées</p>
+		</div>
+	</section>
+
+	<section class="skills-section">
+		<div class="container fade-up delay-400">
+			<div class="skills-grid">
+				{% for skill in skills %}
+					{# Calcul d'un effet delay progressif par card #}
+					{% set delay = 100 + loop.index0 * 80 %}
+					<div class="skill-card fade-up delay-{{ delay }}" data-skill-id="{{ skill.id }}">
+						<h3 class="skill-name fade-up delay-{{ delay + 40 }}">{{ skill.name }}</h3>
+						{% if skill.description %}
+							<p class="skill-description fade-up delay-{{ delay + 80 }}">{{ skill.description }}</p>
+						{% endif %}
+						<div class="skill-footer fade-up delay-{{ delay + 120 }}">
+							<span class="skill-projects-count">
+								<i class="fas fa-project-diagram"></i>
+								{{ skill.projects|length }}
+								projet{{ skill.projects|length > 1 ? 's' : '' }}
+							</span>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+			<div class="skills-download-section fade-up delay-700">
+				<a href="{{ asset('tableau_de_synthese_epreuve_e5.xlsx') }}" class="btn btn-primary btn-large btn-block" id="downloadSkillsBtn" download>
+					<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					Télécharger mon tableau de compétences
+				</a>
+			</div>
+		</div>
+	</section>
+</main>
+
+<!-- Modal for projects -->
+<div class="image-selector-modal" id="skillModal">
+	<div class="modal-dialog">
+		<div class="modal-header fade-up delay-350">
+			<h2 class="modal-title" id="modalSkillTitle"></h2>
+			<button class="modal-close" id="modalClose">
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+		<div class="modal-body fade-up delay-400" style="display: flex; flex-direction: column; gap: 12px;">
+			<p id="modalSkillDescription"></p>
+			<h3 class="fade-up delay-450">Projets attestant de cette compétence :</h3>
+			<div class="modal-projects-list fade-up delay-500" id="modalProjectsList">
+				<div class="loading">Chargement...</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script  nonce="{{ csp_nonce() }}" >
+	document.addEventListener('DOMContentLoaded', function() {
+					const skillCards = document.querySelectorAll('.skill-card');
+					const modal = document.getElementById('skillModal');
+					const modalClose = document.getElementById('modalClose');
+					const modalTitle = document.getElementById('modalSkillTitle');
+					const modalDescription = document.getElementById('modalSkillDescription');
+					const modalProjectsList = document.getElementById('modalProjectsList');
+
+					skillCards.forEach(card => {
+						card.addEventListener('click', async function() {
+							const skillId = this.dataset.skillId;
+							const skillName = this.querySelector('.skill-name').textContent;
+							const skillDesc = this.querySelector('.skill-description')?.textContent || '';
+
+							modalTitle.textContent = skillName;
+							modalDescription.textContent = skillDesc;
+							modalProjectsList.innerHTML = '<div class="loading">Chargement...</div>';
+
+							modal.classList.add('active');
+
+							try {
+								const response = await fetch(`/api/skills/${skillId}/projects`);
+								const projects = await response.json();
+
+								if (projects.length === 0) {
+									modalProjectsList.innerHTML = '<p>Aucun projet associé à cette compétence.</p>';
+								} else {
+									modalProjectsList.innerHTML = projects.map((project, idx) => `
+										<a href="/projects?project=${project.id}&from=skill&skillId=${skillId}" class="modal-project-card fade-up delay-${100 + idx * 50}">
+											${project.image ? `<img src="/uploads/${project.image}" alt="${project.title}" class="modal-project-image">` : '<div class="modal-project-image" style="background: #e0e0e0;"></div>'}
+											<div class="modal-project-info">
+												<h4>${project.title}</h4>
+												<p>${project.shortDescription}</p>
+											</div>
+										</a>
+									`).join('');
+								}
+							} catch (error) {
+								modalProjectsList.innerHTML = '<p>Erreur lors du chargement des projets.</p>';
+							}
+						});
+					});
+
+					modalClose.addEventListener('click', () => modal.classList.remove('active'));
+
+					// Fermer le modal en cliquant en dehors
+					modal.addEventListener('click', (e) => {
+						if (e.target === modal) {
+							modal.classList.remove('active');
+						}
+					});
+
+					// Auto-ouvrir le modal si skillId est dans l'URL
+					const urlParams = new URLSearchParams(window.location.search);
+					const skillIdFromUrl = urlParams.get('skillId');
+
+					if (skillIdFromUrl) {
+						// Trouver la card correspondante et simuler un clic
+						setTimeout(() => {
+							const targetCard = document.querySelector(`.skill-card[data-skill-id="${skillIdFromUrl}"]`);
+							if (targetCard) {
+								targetCard.click();
+							}
+
+							// Nettoyer l'URL sans recharger la page
+							const newUrl = window.location.pathname;
+							window.history.replaceState({}, document.title, newUrl);
+						}, 100);
+					}
+				});
+			</script>
+			{% endblock %}

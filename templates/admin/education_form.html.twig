@@ -1,0 +1,62 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ education ? 'Modifier' : 'Nouvelle' }} formation{% endblock %}
+{% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-page-title">{{ education ? 'Modifier la formation' : 'Nouvelle formation' }}</h1>
+        <p class="admin-page-subtitle">{{ education ? 'Modifiez les informations de la formation' : 'Ajoutez une nouvelle formation académique' }}</p>
+    </div>
+</div>
+<div class="admin-form-container">
+    <form method="post" class="admin-form">
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="degree" class="form-label">Diplôme *</label>
+                <input type="text" id="degree" name="degree" class="form-input" required value="{{ education ? education.degree : '' }}" placeholder="Ex: Master Informatique">
+            </div>
+            <div class="form-group">
+                <label for="institution" class="form-label">Établissement *</label>
+                <input type="text" id="institution" name="institution" class="form-input" required value="{{ education ? education.institution : '' }}" placeholder="Ex: Université Paris">
+            </div>
+        </div>
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="startDate" class="form-label">Date de début *</label>
+                <input type="text" id="startDate" name="startDate" class="form-input" required value="{{ education ? education.startDate : '' }}" placeholder="Ex: Sept 2020">
+            </div>
+            <div class="form-group">
+                <label for="endDate" class="form-label">Date de fin *</label>
+                <input type="text" id="endDate" name="endDate" class="form-input" required value="{{ education ? education.endDate : '' }}" placeholder="Ex: Juin 2022 ou En cours">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-textarea" rows="4">{{ education ? education.description : '' }}</textarea>
+            <small class="form-help">Description du cursus, mentions, spécialités...</small>
+        </div>
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="displayOrder" class="form-label">Ordre d'affichage</label>
+                <input type="number" id="displayOrder" name="displayOrder" class="form-input" value="{{ education ? education.displayOrder : 0 }}">
+            </div>
+            <div class="form-group">
+                <label class="admin-checkbox">
+                    <input type="checkbox" name="isVisible" value="1" {{ education and education.isVisible ? 'checked' : (not education ? 'checked' : '') }}>
+                    <span>Visible sur le site public</span>
+                </label>
+            </div>
+        </div>
+        <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                {{ education ? 'Mettre à jour' : 'Créer la formation' }}
+            </button>
+            <a href="{{ path('admin_education') }}" class="btn btn-secondary btn-large">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

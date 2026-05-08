@@ -1,0 +1,147 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Certifications{% endblock %}
+
+{% block body %}
+	<div class="admin-header">
+		<div>
+			<h1 class="admin-page-title">Certifications & Attestations</h1>
+			<p class="admin-page-subtitle">Gérez vos certifications, diplômes et attestations</p>
+		</div>
+		<a href="{{ path('admin_certifications_new') }}" class="btn btn-primary">
+			<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="12" y1="5" x2="12" y2="19"></line>
+				<line x1="5" y1="12" x2="19" y2="12"></line>
+			</svg>
+			Nouvelle certification
+		</a>
+	</div>
+
+	<div class="admin-section">
+		{% if certifications|length == 0 %}
+			<div class="empty-state">
+				<div class="empty-state-icon">
+					<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+						<path d="M6 12v5c3 3 9 3 12 0v-5"/>
+					</svg>
+				</div>
+				<div>
+					<h3 class="empty-title">Aucune certification</h3>
+					<p class="empty-desc">Commencez par ajouter votre première certification</p>
+					<a href="{{ path('admin_certifications_new') }}" class="btn btn-primary mt-2">Ajouter une certification</a>
+				</div>
+			</div>
+		{% else %}
+			<div class="admin-table-container">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>Type</th>
+							<th>Émetteur</th>
+							<th>Date</th>
+							<th>Expiration</th>
+							<th>PDF</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody id="certifications-list">
+						{% for certification in certifications %}
+							<tr id="certification-{{ certification.id }}">
+								<td>
+									<strong>{{ certification.name }}</strong>
+									{% if certification.subtitle %}
+										<br><small style="color: #6b7280;">{{ certification.subtitle }}</small>
+									{% endif %}
+								</td>
+								<td>
+									<span class="admin-badge badge-{{ certification.type }}">{{ certification.typeLabel }}</span>
+								</td>
+								<td>{{ certification.issuer }}</td>
+								<td>{{ certification.obtainedAtFormatted }}</td>
+								<td>
+									{% if certification.expiresAt %}
+										{% if certification.isExpired %}
+											<span class="admin-badge admin-badge-danger">Expirée</span>
+										{% else %}
+											{{ certification.expiresAt|date('d/m/Y') }}
+										{% endif %}
+									{% else %}
+										<span style="color: #6b7280;">Permanente</span>
+									{% endif %}
+								</td>
+								<td>
+									{% if certification.pdfFile %}
+										<a href="{{ certification.pdfUrl }}" target="_blank" title="Voir le PDF">
+											<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+												<polyline points="14 2 14 8 20 8"/>
+												<line x1="16" y1="13" x2="8" y2="13"/>
+												<line x1="16" y1="17" x2="8" y2="17"/>
+												<polyline points="10 9 9 9 8 9"/>
+											</svg>
+										</a>
+									{% else %}
+										-
+									{% endif %}
+								</td>
+								<td>
+									<div class="admin-table-actions">
+										<a href="{{ path('admin_certifications_edit', {id: certification.id}) }}" class="admin-table-action" title="Modifier">
+											<svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+												<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+											</svg>
+										</a>
+										<button
+											type="button"
+											class="admin-table-action admin-table-action-danger delete-certification-btn"
+											data-certification-id="{{ certification.id }}"
+											data-csrf="{{ csrf_token('delete' ~ certification.id) }}"
+											title="Supprimer">
+											<svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<polyline points="3 6 5 6 21 6"/>
+												<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+											</svg>
+										</button>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script nonce="{{ csp_nonce() }}">
+		// Handler pour bouton de suppression (compat CSP strict)
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelectorAll('.delete-certification-btn').forEach(function(btn) {
+				btn.addEventListener('click', async function() {
+					const id = btn.getAttribute('data-certification-id');
+					const token = btn.getAttribute('data-csrf');
+					if (!confirm('Voulez-vous vraiment supprimer cette certification ?')) return;
+					try {
+						const formData = new FormData();
+						formData.append('_token', token);
+						const response = await fetch(`/admin/certifications/${id}/delete`, {
+							method: 'POST',
+							body: formData
+						});
+						if (response.ok) {
+							document.getElementById(`certification-${id}`).remove();
+						} else {
+							alert('Erreur lors de la suppression.');
+						}
+					} catch (error) {
+						alert('Erreur lors de la suppression.');
+					}
+				});
+			});
+		});
+	</script>
+{% endblock %}

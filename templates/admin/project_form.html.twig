@@ -1,0 +1,487 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}
+	{{ project ? 'Modifier' : 'Nouveau' }}
+	projet
+{% endblock %}
+
+{% block body %}
+	<div class="admin-header">
+		<div>
+			<h1 class="admin-page-title">{{ project ? 'Modifier le projet' : 'Nouveau projet' }}</h1>
+			<p class="admin-page-subtitle">{{ project ? 'Modifiez les informations du projet' : 'Ajoutez un nouveau projet à votre portfolio' }}</p>
+		</div>
+	</div>
+
+	<div class="admin-form-container">
+		<form method="post" class="admin-form">
+			<div class="admin-form-grid">
+				<div class="form-group">
+					<label for="title" class="form-label">Titre du projet *</label>
+					<input type="text" id="title" name="title" class="form-input" required value="{{ project ? project.title : '' }}">
+				</div>
+
+				<div class="form-group">
+					<label for="displayOrder" class="form-label">Ordre d'affichage</label>
+					<input type="number" id="displayOrder" name="displayOrder" class="form-input" value="{{ project ? project.displayOrder : 0 }}">
+				</div>
+			</div>
+
+			<div class="admin-form-grid">
+				<div class="form-group">
+					<label for="type" class="form-label">Type de projet</label>
+					<select id="type" name="type" class="form-input">
+						<option value="">Sélectionner un type</option>
+						<option value="app-web" {{ project and project.type == 'app-web' ? 'selected' : '' }}>Application Web</option>
+						<option value="app-mobile" {{ project and project.type == 'app-mobile' ? 'selected' : '' }}>Application Mobile</option>
+						<option value="app-desktop" {{ project and project.type == 'app-desktop' ? 'selected' : '' }}>Application Desktop</option>
+						<option value="architecture-reseaux" {{ project and project.type == 'architecture-reseaux' ? 'selected' : '' }}>Architecture Réseaux</option>
+						<option value="infrastructure" {{ project and project.type == 'infrastructure' ? 'selected' : '' }}>Infrastructure</option>
+						<option value="cybersecurite" {{ project and project.type == 'cybersecurite' ? 'selected' : '' }}>Cybersécurité</option>
+						<option value="data-science" {{ project and project.type == 'data-science' ? 'selected' : '' }}>Data Science</option>
+						<option value="autre" {{ project and project.type == 'autre' ? 'selected' : '' }}>Autre</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="category" class="form-label">Catégorie</label>
+					<select id="category" name="category" class="form-input">
+						<option value="">Sélectionner une catégorie</option>
+						<option value="formation" {{ project and project.category == 'formation' ? 'selected' : '' }}>Projet de formation</option>
+						<option value="professionnel" {{ project and project.category == 'professionnel' ? 'selected' : '' }}>Projet professionnel</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="admin-form-grid">
+				<div class="form-group">
+					<label for="startDate" class="form-label">Date de début</label>
+					<input type="date" id="startDate" name="startDate" class="form-input" value="{{ project and project.startDate ? project.startDate|date('Y-m-d') : '' }}">
+					<small class="form-help">Date de début du projet</small>
+				</div>
+
+				<div class="form-group">
+					<label for="endDate" class="form-label">Date de fin</label>
+					<input type="date" id="endDate" name="endDate" class="form-input" value="{{ project and project.endDate ? project.endDate|date('Y-m-d') : '' }}">
+					<small class="form-help">Laisser vide si le projet est en cours</small>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="shortDescription" class="form-label">Description courte *</label>
+				<textarea id="shortDescription" name="shortDescription" class="form-textarea" rows="3" required>{{ project ? project.shortDescription : '' }}</textarea>
+				<small class="form-help">Description visible sur la carte du projet</small>
+			</div>
+
+			<div class="form-group">
+				<label for="fullDescription" class="form-label">Description complète</label>
+				<div class="markdown-editor">
+					<div class="markdown-toolbar">
+						<button type="button" class="md-btn" data-action="bold" title="Gras (Ctrl+B)">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+								<path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="italic" title="Italique (Ctrl+I)">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<line x1="19" y1="4" x2="10" y2="4"></line>
+								<line x1="14" y1="20" x2="5" y2="20"></line>
+								<line x1="15" y1="4" x2="9" y2="20"></line>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="strikethrough" title="Barré">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M17.3 4.9c-2.3-.6-4.4-1-6.2-.9-2.7 0-5.3.7-5.3 3.6 0 1.5 1.8 3.3 3.6 3.9h.2m8.2 3.7c.3.4.4.8.4 1.3 0 2.9-2.7 3.6-6.2 3.6-2.3 0-4.4-.3-6.2-.9M4 11.5h16"></path>
+							</svg>
+						</button>
+						<span class="toolbar-divider"></span>
+						<button type="button" class="md-btn" data-action="heading" title="Titre">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M6 4v16M18 4v16M8 12h8"></path>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="code" title="Code inline">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="16 18 22 12 16 6"></polyline>
+								<polyline points="8 6 2 12 8 18"></polyline>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="codeblock" title="Bloc de code">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="2" y="6" width="20" height="12" rx="2"></rect>
+								<path d="M7 10l3 3-3 3m7 0h4"></path>
+							</svg>
+						</button>
+						<span class="toolbar-divider"></span>
+						<button type="button" class="md-btn" data-action="link" title="Lien">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+								<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="image" title="Image">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+								<circle cx="8.5" cy="8.5" r="1.5"></circle>
+								<polyline points="21 15 16 10 5 21"></polyline>
+							</svg>
+						</button>
+						<span class="toolbar-divider"></span>
+						<button type="button" class="md-btn" data-action="ul" title="Liste à puces">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<line x1="8" y1="6" x2="21" y2="6"></line>
+								<line x1="8" y1="12" x2="21" y2="12"></line>
+								<line x1="8" y1="18" x2="21" y2="18"></line>
+								<line x1="3" y1="6" x2="3.01" y2="6"></line>
+								<line x1="3" y1="12" x2="3.01" y2="12"></line>
+								<line x1="3" y1="18" x2="3.01" y2="18"></line>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="ol" title="Liste numérotée">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<line x1="10" y1="6" x2="21" y2="6"></line>
+								<line x1="10" y1="12" x2="21" y2="12"></line>
+								<line x1="10" y1="18" x2="21" y2="18"></line>
+								<path d="M4 6h1v4"></path>
+								<path d="M4 10h2"></path>
+								<path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="quote" title="Citation">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M3 21h18M6 18V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v12"></path>
+							</svg>
+						</button>
+						<span class="toolbar-divider"></span>
+						<button type="button" class="md-btn" data-action="table" title="Tableau">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+								<line x1="3" y1="9" x2="21" y2="9"></line>
+								<line x1="3" y1="15" x2="21" y2="15"></line>
+								<line x1="12" y1="3" x2="12" y2="21"></line>
+							</svg>
+						</button>
+						<button type="button" class="md-btn" data-action="hr" title="Ligne horizontale">
+							<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<line x1="3" y1="12" x2="21" y2="12"></line>
+							</svg>
+						</button>
+						<span class="toolbar-divider"></span>
+
+
+					</div>
+					<textarea id="fullDescription" name="fullDescription" class="markdown-textarea" rows="15" placeholder="Décrivez votre projet en détail avec Markdown...">{{ project ? project.fullDescription : '' }}</textarea>
+					<div class="markdown-footer">
+						<small class="form-help">
+							<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+								<rect x="2" y="3" width="20" height="14" rx="2"></rect>
+								<path d="M8 21h8"></path>
+								<path d="M12 17v4"></path>
+							</svg>
+							Markdown supporté •
+							<a href="#" id="mdPreviewToggle">Aperçu</a>
+						</small>
+					</div>
+					<div class="markdown-preview" id="mdPreview" style="display: none;">
+						<div class="markdown-preview-header">
+							<span>Aperçu</span>
+							<button type="button" class="md-preview-close">Fermer</button>
+						</div>
+						<div class="markdown-preview-content prose" id="mdPreviewContent" style="max-width: 100%; padding-left: 40px; padding-right: 40px;"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="technologies" class="form-label">Technologies *</label>
+				<div class="multi-select-container">
+					<div class="multi-select-input" id="techSelectInput">
+						<div class="selected-tags" id="selectedTags">
+							{% if project %}
+								{% for tech in project.technologies %}
+									<input type="hidden" name="technologies[]" value="{{ tech.id }}">
+								{% endfor %}
+							{% endif %}
+						</div>
+						<input type="text" id="techSearch" placeholder="Rechercher une technologie..." autocomplete="off">
+					</div>
+					<div class="multi-select-dropdown" id="techDropdown" style="display: none;">
+						<div class="multi-select-list" id="techList">
+							<div class="loading-text">Chargement...</div>
+						</div>
+					</div>
+				</div>
+				<small class="form-help">Sélectionnez une ou plusieurs technologies</small>
+			</div>
+
+			<div class="form-group">
+				<label for="skills" class="form-label">Compétences BTS SIO mobilisées</label>
+				<div class="multi-select-container">
+					<div class="multi-select-input" id="skillSelectInput">
+						<div class="selected-tags" id="selectedSkillTags">
+							{% if project %}
+								{% for skill in project.skills %}
+									<input type="hidden" name="skills[]" value="{{ skill.id }}">
+								{% endfor %}
+							{% endif %}
+						</div>
+						<input type="text" id="skillSearch" placeholder="Rechercher une compétence..." autocomplete="off">
+					</div>
+					<div class="multi-select-dropdown" id="skillDropdown" style="display: none;">
+						<div class="multi-select-list" id="skillList">
+							<div class="loading-text">Chargement...</div>
+						</div>
+					</div>
+				</div>
+				<small class="form-help">Sélectionnez les compétences BTS SIO mobilisées par ce projet</small>
+
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Image du projet</label>
+				<input type="hidden" id="image" name="image" value="{{ project ? project.image : '' }}">
+
+				<div class="image-selector-container">
+					<div class="image-preview" id="imagePreview">
+						{% if project and project.image %}
+							<img src="{{ asset('uploads/' ~ project.image) }}" alt="Aperçu">
+							<button type="button" class="image-remove-btn" id="removeImage">
+								<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<line x1="18" y1="6" x2="6" y2="18"></line>
+									<line x1="6" y1="6" x2="18" y2="18"></line>
+								</svg>
+							</button>
+						{% else %}
+							<div class="image-placeholder">
+								<svg width="48" height="48" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+									<circle cx="8.5" cy="8.5" r="1.5"></circle>
+									<polyline points="21 15 16 10 5 21"></polyline>
+								</svg>
+								<p>Aucune image sélectionnée</p>
+							</div>
+						{% endif %}
+					</div>
+					<button type="button" class="btn btn-secondary" id="selectImageBtn">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+							<circle cx="8.5" cy="8.5" r="1.5"></circle>
+							<polyline points="21 15 16 10 5 21"></polyline>
+						</svg>
+						Choisir une image
+					</button>
+				</div>
+			</div>
+
+			<div class="admin-form-grid">
+				<div class="form-group">
+					<label for="githubUrl" class="form-label">URL GitHub</label>
+					<input type="url" id="githubUrl" name="githubUrl" class="form-input" value="{{ project ? project.githubUrl : '' }}" placeholder="https://github.com/username/repo">
+				</div>
+
+				<div class="form-group">
+					<label for="liveUrl" class="form-label">URL du site en ligne</label>
+					<input type="url" id="liveUrl" name="liveUrl" class="form-input" value="{{ project ? project.liveUrl : '' }}" placeholder="https://myproject.com">
+				</div>
+			</div>
+
+			{% if project %}
+				<div class="form-group">
+					<label class="form-label">Images du carrousel</label>
+					<small class="form-help">Images qui seront affichées dans le carrousel de la page projet</small>
+					<div class="project-gallery-container">
+						<div class="project-gallery-grid" id="projectGalleryGrid">
+							<div class="loading-text">Chargement des images...</div>
+						</div>
+						<button type="button" class="btn btn-secondary" id="selectGalleryImagesBtn">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+								<circle cx="8.5" cy="8.5" r="1.5"></circle>
+								<polyline points="21 15 16 10 5 21"></polyline>
+							</svg>
+							Ajouter des images au carrousel
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="form-label">Fichiers attachés au projet</label>
+					<div class="project-files-container">
+						<div class="project-files-list" id="projectFilesList">
+							<div class="loading-text">Chargement des fichiers...</div>
+						</div>
+						<button type="button" class="btn btn-secondary" id="selectFilesBtn">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="17 8 12 3 7 8"></polyline>
+								<line x1="12" y1="3" x2="12" y2="15"></line>
+							</svg>
+							Ajouter des fichiers
+						</button>
+					</div>
+				</div>
+				<div class="form-group">
+				<label class="form-label">Preuves par compétence</label>
+				<small class="form-help">Ajoutez des captures d'écran ou images de preuve liées aux compétences BTS SIO de ce projet</small>
+
+				<div class="preuves-section" id="preuvesSection" data-project-id="{{ project.id }}">
+					<!-- Formulaire d'ajout -->
+					<div class="preuve-add-form">
+						<div class="admin-form-grid">
+							<div class="form-group">
+								<label class="form-label" for="preuveTitle">Titre *</label>
+								<input type="text" id="preuveTitle" class="form-input" placeholder="Ex: Page de connexion">
+							</div>
+							<div class="form-group">
+								<label class="form-label" for="preuveSkill">Compétence BTS *</label>
+								<select id="preuveSkill" class="form-input">
+									<option value="">Sélectionner une compétence</option>
+									{% for skill in project.skills %}
+										<option value="{{ skill.id }}">{{ skill.code ? skill.code ~ ' — ' : '' }}{{ skill.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="preuveDescription">Description</label>
+							<textarea id="preuveDescription" class="form-input" rows="2" placeholder="Description optionnelle de la preuve"></textarea>
+						</div>
+						<div class="form-group">
+							<label class="form-label">Image de preuve *</label>
+							<div class="preuve-image-selector">
+								<input type="hidden" id="preuveFilename" value="">
+								<div class="preuve-image-preview" id="preuveImagePreview" style="display: none;">
+									<img id="preuveImagePreviewImg" src="" alt="">
+									<button type="button" class="preuve-image-remove" id="preuveImageRemoveBtn">&times;</button>
+								</div>
+								<button type="button" class="btn btn-secondary" id="preuveSelectImageBtn">
+									<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+										<circle cx="8.5" cy="8.5" r="1.5"></circle>
+										<polyline points="21 15 16 10 5 21"></polyline>
+									</svg>
+									Choisir une image
+								</button>
+							</div>
+						</div>
+						<button type="button" class="btn btn-primary" id="preuveAddBtn">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<line x1="12" y1="5" x2="12" y2="19"></line>
+								<line x1="5" y1="12" x2="19" y2="12"></line>
+							</svg>
+							Ajouter la preuve
+						</button>
+					</div>
+
+					<!-- Liste des preuves existantes -->
+					<div class="preuves-list" id="preuvesList">
+						<div class="loading-text">Chargement des preuves...</div>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+
+			<div class="form-group">
+				<label class="admin-checkbox">
+					<input type="checkbox" name="isVisible" value="1" {{ project and project.isVisible ? 'checked' : (not project ? 'checked' : '') }}>
+					<span>Visible sur le site public</span>
+				</label>
+			</div>
+
+			<div class="admin-form-actions">
+				<button type="submit" class="btn btn-primary btn-large">
+					<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+						<polyline points="17 21 17 13 7 13 7 21"></polyline>
+						<polyline points="7 3 7 8 15 8"></polyline>
+					</svg>
+					{{ project ? 'Mettre à jour' : 'Créer le projet' }}
+				</button>
+				<a href="{{ path('admin_projects') }}" class="btn btn-secondary btn-large">Annuler</a>
+			</div>
+		</form>
+	</div>
+
+	<!-- Modal réutilisable pour sélection de fichiers/images -->
+	<div class="media-selector-modal" id="mediaSelectorModal">
+		<div class="modal-dialog">
+			<div class="modal-header">
+				<h3 class="modal-title" id="modalTitle">Sélectionner des fichiers</h3>
+				<button type="button" class="modal-close" id="closeModalBtn">
+					<svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+
+			<div class="modal-tabs">
+				<button class="modal-tab active" data-tab="gallery">
+					<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+						<circle cx="8.5" cy="8.5" r="1.5"></circle>
+						<polyline points="21 15 16 10 5 21"></polyline>
+					</svg>
+					Galerie
+				</button>
+				<button class="modal-tab" data-tab="upload">
+					<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="17 8 12 3 7 8"></polyline>
+						<line x1="12" y1="3" x2="12" y2="15"></line>
+					</svg>
+					Upload
+				</button>
+			</div>
+
+			<div
+				class="modal-body">
+				<!-- Gallery Tab -->
+				<div class="modal-tab-content active" id="galleryTab">
+					<div class="modal-gallery-grid" id="modalGalleryGrid">
+						<div class="loading-spinner">Chargement...</div>
+					</div>
+				</div>
+
+				<!-- Upload Tab -->
+				<div class="modal-tab-content" id="uploadTab">
+					<div class="modal-upload-area">
+						<div class="upload-drop-zone" id="modalDropZone">
+							<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="17 8 12 3 7 8"></polyline>
+								<line x1="12" y1="3" x2="12" y2="15"></line>
+							</svg>
+							<p class="upload-text">Glissez-déposez vos fichiers ici</p>
+							<p class="upload-subtext">ou</p>
+							<button type="button" class="btn btn-primary" id="modalSelectFileBtn">
+								Sélectionner des fichiers
+							</button>
+							<input type="file" id="modalFileInput" multiple style="display: none;">
+							<p class="upload-hint" id="modalUploadHint">JPG, PNG, GIF, WebP ou SVG (Max 5MB)</p>
+						</div>
+
+						<div class="upload-progress" id="modalUploadProgress" style="display: none;">
+							<div class="upload-progress-bar">
+								<div class="upload-progress-fill" id="modalProgressFill"></div>
+							</div>
+							<p id="modalUploadStatus">Upload en cours...</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer" id="modalFooter" style="display: none;">
+				<button type="button" class="btn btn-secondary" id="modalCancelBtn">Annuler</button>
+				<button type="button" class="btn btn-primary" id="modalValidateBtn">
+					Sélectionner
+					<span id="selectedCount"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="{{ asset('assets/scripts/project-form.js') }}"></script>
+
+{% endblock %}

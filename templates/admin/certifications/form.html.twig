@@ -1,0 +1,618 @@
+{% extends 'admin/base.html.twig' %} {% block title %}{{ page_title }}{%
+endblock %} {% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-page-title">
+            {{
+                certification.id
+                    ? "Modifier la certification"
+                    : "Nouvelle certification"
+            }}
+        </h1>
+        <p class="admin-page-subtitle">
+            {{
+                certification.id
+                    ? "Modifiez les informations de la certification"
+                    : "Ajoutez une nouvelle certification à votre portfolio"
+            }}
+        </p>
+    </div>
+</div>
+
+<div class="admin-form-container">
+    {{ form_start(form, {'attr': {'class': 'admin-form'}}) }}
+
+    <div class="form-group">
+        {{ form_label(form.name, 'Nom *', {'attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.name, {'attr': {'class': 'form-input', 'placeholder': 'Ex: AWS Certified Solutions Architect'
+        }}) }}
+        {{ form_errors(form.name) }}
+    </div>
+
+    <div class="admin-form-grid">
+        <div class="form-group">
+            {{ form_label(form.type, null, {'attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.type, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.type) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.displayOrder, 'Ordre d\'affichage', {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.displayOrder, {'attr': {'class': 'form-input'}})
+            }}
+            {{ form_errors(form.displayOrder) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.subtitle, null, {'attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.subtitle, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Professional'
+        }}) }}
+        {{ form_errors(form.subtitle) }}
+        <small class="form-help"
+            >Optionnel - Un sous-titre pour la certification</small
+        >
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.description, null, {'attr': {'class': 'form-label'}})
+        }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-input', 'rows': 3
+        }}) }}
+        {{ form_errors(form.description) }}
+        <small class="form-help"
+            >Optionnel - Description de la certification</small
+        >
+    </div>
+
+    <div class="admin-form-grid">
+        <div class="form-group">
+            {{ form_label(form.issuer, 'Émetteur *', {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.issuer, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Amazon Web Services'
+            }}) }}
+            {{ form_errors(form.issuer) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.issuerSlug, null, {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.issuerSlug, {'attr': {'class': 'form-input', 'placeholder': 'Ex: aws'
+            }}) }}
+            {{ form_errors(form.issuerSlug) }}
+            <small class="form-help"
+                >Slug pour le style (aws, google, microsoft, etc.)</small
+            >
+        </div>
+    </div>
+
+    <div class="admin-form-grid">
+        <div class="form-group">
+            {{ form_label(form.obtainedAt, 'Date d\'obtention *', {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.obtainedAt, {'attr': {'class': 'form-input'}})
+            }}
+            {{ form_errors(form.obtainedAt) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.expiresAt, 'Date d\'expiration', {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.expiresAt, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.expiresAt) }}
+            <small class="form-help"
+                >Optionnel - Laissez vide si permanente</small
+            >
+        </div>
+    </div>
+
+    <div class="admin-form-grid">
+        <div class="form-group">
+            {{ form_label(form.credentialId, null, {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.credentialId, {'attr': {'class': 'form-input'}})
+            }}
+            {{ form_errors(form.credentialId) }}
+            <small class="form-help"
+                >Optionnel - Identifiant de la certification</small
+            >
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.verificationUrl, 'URL de vérification', {'attr': {'class': 'form-label'
+            }}) }}
+            {{ form_widget(form.verificationUrl, {'attr': {'class': 'form-input'
+            }}) }}
+            {{ form_errors(form.verificationUrl) }}
+            <small class="form-help"
+                >Optionnel - Lien pour vérifier la certification</small
+            >
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Fichier PDF de la certification</label>
+        <input
+            type="hidden"
+            id="pdfFile"
+            name="pdfFile"
+            value="{{ certification.pdfFile ? certification.pdfFile : '' }}"
+        />
+
+        <div class="pdf-selector-container">
+            {% if certification.pdfFile %}
+            <div class="pdf-file-selected" id="pdfPreview">
+                <div class="pdf-file-info">
+                    <span class="pdf-file-name">{{
+                        certification.pdfFile
+                    }}</span>
+                    <a
+                        href="{{ certification.pdfUrl }}"
+                        target="_blank"
+                        class="pdf-file-link"
+                        >Voir le PDF</a
+                    >
+                </div>
+                <button
+                    type="button"
+                    class="pdf-remove-btn"
+                    id="removePdf"
+                    title="Retirer le fichier"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            {% else %}
+            <div class="pdf-empty-state" id="pdfPreview">
+                <span class="pdf-empty-text"
+                    >Aucun fichier PDF sélectionné</span
+                >
+            </div>
+            {% endif %}
+            <button type="button" class="btn btn-secondary" id="selectPdfBtn">
+                <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                    />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg>
+                Choisir un PDF
+            </button>
+        </div>
+        <small class="form-help"
+            >Sélectionnez ou uploadez le certificat en PDF</small
+        >
+    </div>
+
+    {{ form_row(form.pdfFileUpload, {'attr': {'style': 'display: none;'}}) }}
+
+    <div class="admin-form-grid">
+        <div class="form-group">
+            <label class="admin-checkbox">
+                {{ form_widget(form.isVisible) }}
+                <span>{{ form.isVisible.vars.label }}</span>
+            </label>
+            {{ form_errors(form.isVisible) }}
+        </div>
+    </div>
+
+    <div class="admin-form-actions">
+        <button type="submit" class="btn btn-primary btn-large">
+            <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <path
+                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                ></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            {{ certification.id ? "Mettre à jour" : "Créer la certification" }}
+        </button>
+        <a
+            href="{{ path('admin_certifications_index') }}"
+            class="btn btn-secondary btn-large"
+            >Annuler</a
+        >
+    </div>
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %} {% block javascripts %}
+<!-- Modal de sélection de fichiers PDF -->
+<div class="media-selector-modal" id="mediaSelectorModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Sélectionner un fichier PDF</h3>
+            <button type="button" class="modal-close" id="closeModalBtn">
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-tabs">
+            <button class="modal-tab active" data-tab="gallery">
+                <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                    />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg>
+                Galerie
+            </button>
+            <button class="modal-tab" data-tab="upload">
+                <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Upload
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Gallery Tab -->
+            <div class="modal-tab-content active" id="galleryTab">
+                <div class="modal-gallery-grid" id="modalGalleryGrid">
+                    <div class="loading-spinner">Chargement...</div>
+                </div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div class="modal-tab-content" id="uploadTab">
+                <div class="modal-upload-area">
+                    <div class="upload-drop-zone" id="modalDropZone">
+                        <svg
+                            width="64"
+                            height="64"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                            ></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p class="upload-text">
+                            Glissez-déposez votre fichier PDF ici
+                        </p>
+                        <p class="upload-subtext">ou</p>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            id="modalSelectFileBtn"
+                        >
+                            Sélectionner un fichier
+                        </button>
+                        <input
+                            type="file"
+                            id="modalFileInput"
+                            accept="application/pdf"
+                            style="display: none"
+                        />
+                        <p class="upload-hint">PDF uniquement (Max 2MB)</p>
+                    </div>
+
+                    <div
+                        class="upload-progress"
+                        id="modalUploadProgress"
+                        style="display: none"
+                    >
+                        <div class="upload-progress-bar">
+                            <div
+                                class="upload-progress-fill"
+                                id="modalProgressFill"
+                            ></div>
+                        </div>
+                        <p id="modalUploadStatus">Upload en cours...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce() }}">
+    document.addEventListener('DOMContentLoaded', function() {
+        // === MODAL ELEMENTS ===
+        const modal = document.getElementById('mediaSelectorModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalGalleryGrid = document.getElementById('modalGalleryGrid');
+
+        // PDF selector
+        const selectPdfBtn = document.getElementById('selectPdfBtn');
+        const removePdfBtn = document.getElementById('removePdf');
+        const pdfInput = document.getElementById('pdfFile');
+        const pdfPreview = document.getElementById('pdfPreview');
+
+        // Tabs
+        const modalTabs = document.querySelectorAll('.modal-tab');
+        const tabContents = document.querySelectorAll('.modal-tab-content');
+
+        // Upload
+        const modalDropZone = document.getElementById('modalDropZone');
+        const modalFileInput = document.getElementById('modalFileInput');
+        const modalSelectFileBtn = document.getElementById('modalSelectFileBtn');
+        const modalUploadProgress = document.getElementById('modalUploadProgress');
+        const modalProgressFill = document.getElementById('modalProgressFill');
+        const modalUploadStatus = document.getElementById('modalUploadStatus');
+
+        // === OPEN/CLOSE MODAL ===
+        function openModal() {
+            modal.classList.add('active');
+            loadGallery();
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // === LOAD GALLERY (PDF ONLY) ===
+        async function loadGallery() {
+            modalGalleryGrid.innerHTML = '<div class="loading-spinner">Chargement...</div>';
+
+            try {
+                const response = await fetch('{{ path('admin_media_api_pdfs') }}');
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+
+                const data = await response.json();
+                const pdfs = data.files;
+
+                if (pdfs.length === 0) {
+                    modalGalleryGrid.innerHTML = '<div class="modal-empty-state"><p>Aucun fichier PDF disponible</p></div>';
+                    return;
+                }
+
+                modalGalleryGrid.innerHTML = '';
+                pdfs.forEach(pdf => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'modal-gallery-item';
+                    galleryItem.innerHTML = `
+                        <div class="file-icon file-icon-document">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div class="file-name">${pdf.name}</div>
+                        <div class="modal-gallery-item-overlay">
+                            <button type="button" class="btn btn-primary btn-sm select-btn" data-filename="${pdf.name}">
+                                Sélectionner
+                            </button>
+                        </div>
+                    `;
+                    modalGalleryGrid.appendChild(galleryItem);
+                });
+
+                // Event listeners for selection
+                document.querySelectorAll('.select-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const filename = this.dataset.filename;
+                        selectPdf(filename);
+                        closeModal();
+                    });
+                });
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                modalGalleryGrid.innerHTML = '<div class="modal-empty-state"><p>Erreur: ' + error.message + '</p></div>';
+            }
+        }
+
+        // === SELECT PDF ===
+        function selectPdf(filename) {
+            pdfInput.value = filename;
+            updatePdfPreview(filename);
+        }
+
+        function updatePdfPreview(filename) {
+            pdfPreview.className = 'pdf-file-selected';
+            pdfPreview.innerHTML = `
+                <div class="pdf-file-info">
+                    <span class="pdf-file-name">${filename}</span>
+                    <a href="/uploads/${filename}" target="_blank" class="pdf-file-link">Voir le PDF</a>
+                </div>
+                <button type="button" class="pdf-remove-btn" id="removePdf" title="Retirer le fichier">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
+
+            document.getElementById('removePdf').addEventListener('click', removePdf);
+        }
+
+        function removePdf() {
+            pdfInput.value = '';
+            pdfPreview.className = 'pdf-empty-state';
+            pdfPreview.innerHTML = `
+                <span class="pdf-empty-text">Aucun fichier PDF sélectionné</span>
+            `;
+        }
+
+        // === TAB SWITCHING ===
+        modalTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                modalTabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(targetTab + 'Tab').classList.add('active');
+            });
+        });
+
+        // === UPLOAD ===
+        modalSelectFileBtn.addEventListener('click', () => modalFileInput.click());
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            modalDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            modalDropZone.addEventListener(eventName, () => modalDropZone.classList.add('drag-over'));
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            modalDropZone.addEventListener(eventName, () => modalDropZone.classList.remove('drag-over'));
+        });
+
+        modalDropZone.addEventListener('drop', function(e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                uploadFile(files[0]);
+            }
+        });
+
+        modalFileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                uploadFile(this.files[0]);
+            }
+        });
+
+        async function uploadFile(file) {
+            // Vérification de la taille du fichier côté client (limite PHP: 2MB)
+            const maxSize = 2 * 1024 * 1024; // 2MB (limite PHP actuelle)
+            if (file.size > maxSize) {
+                alert(`Le fichier est trop volumineux (${(file.size / 1024 / 1024).toFixed(2)}MB). Maximum autorisé: 2MB.\n\nNote: Vous pouvez augmenter cette limite dans la configuration PHP (upload_max_filesize et post_max_size).`);
+                return;
+            }
+
+            modalDropZone.style.display = 'none';
+            modalUploadProgress.style.display = 'block';
+            modalProgressFill.style.width = '0%';
+            modalUploadStatus.textContent = 'Upload en cours...';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileType', 'file');
+
+                const response = await fetch('{{ path('admin_media_upload') }}', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                modalProgressFill.style.width = '100%';
+
+                if (data.success && data.filename) {
+                    modalUploadStatus.textContent = 'Fichier uploadé !';
+
+                    setTimeout(() => {
+                        selectPdf(data.filename);
+                        closeModal();
+                        modalDropZone.style.display = 'flex';
+                        modalUploadProgress.style.display = 'none';
+                        modalFileInput.value = '';
+                    }, 800);
+                } else {
+                    throw new Error(data.error || 'Erreur lors de l\'upload');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                modalUploadStatus.textContent = 'Erreur: ' + error.message;
+                setTimeout(() => {
+                    modalDropZone.style.display = 'flex';
+                    modalUploadProgress.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        // === EVENT LISTENERS ===
+        if (selectPdfBtn) {
+            selectPdfBtn.addEventListener('click', openModal);
+        }
+
+        if (removePdfBtn) {
+            removePdfBtn.addEventListener('click', removePdf);
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // === AUTO-GENERATE ISSUER SLUG ===
+        const issuerInput = document.getElementById('certification_issuer');
+        const issuerSlugInput = document.getElementById('certification_issuerSlug');
+
+        if (issuerInput && issuerSlugInput) {
+            issuerInput.addEventListener('input', function() {
+                if (!issuerSlugInput.value) {
+                    const slug = this.value
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                    issuerSlugInput.value = slug;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

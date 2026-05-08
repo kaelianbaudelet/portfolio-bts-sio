@@ -1,0 +1,980 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Veille Technologique
+{% endblock %}
+
+{% block stylesheets %}
+	<style>
+		.tech-watch-grid {
+			display: grid;
+			gap: 2rem;
+			align-items: start;
+		}
+
+		@media(max-width: 980px) {
+			.tech-watch-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+        .contact-tech-watch-aside {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .tech-watch-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+		.tech-watch-header {
+			display: flex;
+			align-items: center;
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.tech-watch-intro {
+			font-size: 1.0625rem;
+			color: var(--text-secondary);
+			line-height: 1.8;
+		}
+
+		.tech-watch-problem {
+			background-color: var(--bg-secondary);
+			padding: 1.25rem;
+			border-radius: 12px;
+			border: 1px solid var(--border-color);
+		}
+
+		.tech-watch-definitions {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1rem;
+		}
+
+		.tech-watch-def {
+			background: var(--bg-secondary);
+			padding: 1.25rem;
+			border-radius: 10px;
+			border: 1px solid var(--border-color);
+		}
+
+		.tech-watch-def dt {
+			font-weight: 700;
+			color: var(--text-primary);
+			margin-bottom: 0.5rem;
+		}
+
+		.tech-watch-def dd {
+			margin: 0;
+			color: var(--text-secondary);
+			font-size: 0.9375rem;
+		}
+
+		.tech-watch-method {
+			background-color: var(--bg-secondary);
+			padding: 1.25rem;
+			border-radius: 10px;
+			border: 1px solid var(--border-color);
+		}
+
+		.tech-watch-method ul {
+			margin: 1rem 0 0 1.5rem;
+			color: var(--text-secondary);
+		}
+
+		.tech-watch-method li {
+			margin: 0.75rem 0;
+		}
+
+		.methodology-cards {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			margin-top: 1.5rem;
+		}
+
+		.methodology-card {
+			display: flex;
+			gap: 1rem;
+			padding: 1.25rem;
+			background: var(--bg-secondary);
+			border: 1px solid var(--border-color);
+			border-radius: 12px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.methodology-card:hover {
+			transform: translateY(-2px);
+			box-shadow: var(--shadow-lg);
+			border-color: var(--accent-color);
+		}
+
+		.methodology-card-image {
+			width: 80px;
+			height: 80px;
+			min-width: 80px;
+			border-radius: 8px;
+			object-fit: cover;
+			background: var(--accent-color);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-size: 2rem;
+		}
+
+		.methodology-card-content {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.methodology-card-title {
+			font-weight: 700;
+			font-size: 1.125rem;
+			color: var(--text-primary);
+			margin: 0;
+		}
+
+		.methodology-card-description {
+			color: var(--text-secondary);
+			font-size: 0.9375rem;
+			line-height: 1.6;
+			margin: 0;
+		}
+
+		@media(max-width: 768px) {
+			.methodology-card {
+				flex-direction: column;
+			}
+
+			.methodology-card-image {
+				width: 100%;
+				height: 120px;
+			}
+		}
+
+		.tech-watch-separator {
+			height: 1px;
+			border-top: 1px solid var(--border-color);
+			margin: 1rem 0;
+			border-radius: 4px;
+		}
+
+		.tech-watch-badge {
+			display: inline-block;
+			padding: 0.5rem 0.875rem;
+			border-radius: 999px;
+			font-size: 0.8125rem;
+			background: var(--bg-secondary);
+			color: var(--text-secondary);
+			border: 1px solid var(--border-color);
+		}
+
+		.tech-watch-tags {
+			display: flex;
+			gap: 0.75rem;
+			flex-wrap: wrap;
+		}
+
+		.tech-watch-tag {
+			padding: 0.5rem 0.875rem;
+			border-radius: 999px;
+			border: 1px solid var(--border-color);
+			font-size: 0.875rem;
+			background: var(--bg-secondary);
+			color: var(--text-primary);
+		}
+
+		.search-filter-container {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.search-box {
+			flex: 1;
+			min-width: 250px;
+			position: relative;
+		}
+
+		.search-box input {
+			width: 100%;
+			padding: 0.75rem 1rem 0.75rem 2.5rem;
+			border-radius: 10px;
+			border: 1px solid var(--border-color);
+			background: var(--bg-secondary);
+			color: var(--text-primary);
+			font-size: 0.9375rem;
+			transition: all 0.3s ease;
+		}
+
+		.search-box input:focus {
+			outline: none;
+			border-color: var(--accent-color);
+			box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+		}
+
+		.search-box svg {
+			position: absolute;
+			left: 0.875rem;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 18px;
+			height: 18px;
+			color: var(--text-secondary);
+			pointer-events: none;
+		}
+
+		.sort-container {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.sort-label {
+			font-size: 0.875rem;
+			color: var(--text-secondary);
+			font-weight: 500;
+			white-space: nowrap;
+		}
+
+		.sort-select {
+			padding: 0.625rem 2.5rem 0.625rem 1rem;
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+			background: var(--bg-secondary);
+			color: var(--text-primary);
+			font-size: 0.875rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: right 0.5rem center;
+			background-size: 1.25rem;
+		}
+
+		.sort-select:hover {
+			border-color: var(--accent-color);
+		}
+
+		.sort-select:focus {
+			outline: none;
+			border-color: var(--accent-color);
+			box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+		}
+
+		.tech-watch-articles-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			gap: 1.5rem;
+		}
+
+		.tech-watch-article {
+			background: var(--card-bg);
+			border-radius: 12px;
+			border: 1px solid var(--border-color);
+			display: flex;
+			flex-direction: column;
+			transition: all 0.3s ease;
+			overflow: hidden;
+			height: 100%;
+		}
+
+		.tech-watch-article.hidden {
+			display: none;
+		}
+
+		.tech-watch-article:hover {
+			transform: translateY(-4px);
+			box-shadow: var(--shadow-lg);
+		}
+
+		.article-image {
+			width: 100%;
+			height: 200px;
+			object-fit: cover;
+			background: var(--accent-color);
+		}
+
+		.article-content {
+			padding: 1.5rem;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			flex-grow: 1;
+		}
+
+		.article-header {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.article-meta {
+			display: flex;
+			gap: 0.75rem;
+			align-items: center;
+			flex-wrap: wrap;
+			font-size: 0.8125rem;
+			color: var(--text-secondary);
+		}
+
+		.article-meta-item {
+			display: flex;
+			align-items: center;
+			gap: 0.375rem;
+		}
+
+		.article-meta svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.tech-watch-article h3 {
+			margin: 0;
+			font-size: 1.125rem;
+			color: var(--text-primary);
+			line-height: 1.4;
+		}
+
+		.tech-watch-article p {
+			margin: 0;
+			color: var(--text-secondary);
+			font-size: 0.9375rem;
+			line-height: 1.6;
+			flex-grow: 1;
+		}
+
+		.article-footer {
+			margin-top: auto;
+		}
+
+		.tech-watch-article a {
+			display: inline-block;
+			padding: 0.625rem 1.25rem;
+			border-radius: 8px;
+			background-color: var(--accent-color);
+			color: white;
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 0.875rem;
+			transition: all 0.3s ease;
+		}
+
+		.no-results {
+			text-align: center;
+			padding: 3rem 1rem;
+			color: var(--text-secondary);
+			font-size: 1rem;
+		}
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+		.tech-watch-article a:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+		}
+
+		@media(max-width: 768px) {
+			.tech-watch-definitions {
+				grid-template-columns: 1fr;
+			}
+
+			.tech-watch-header {
+				flex-direction: row;
+				gap: 1rem;
+			}
+
+			.tech-watch-logo {
+				width: 60px;
+				height: 60px;
+			}
+
+			.tech-watch-logo h2 {
+				font-size: 0.875rem;
+			}
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<main class="main">
+        <section class="page-hero">
+			<div class="container">
+				<h1 class="page-title fade-up" >Veille Technologique</h1>
+						<p class="page-subtitle fade-up delay-200" >Le web moderne et réactif</p>
+			</div>
+		</section>
+		<section class="contact-page-section">
+			<div class="container">
+				<div class="tech-watch-grid">
+					<div class="fade-up delay-400 tech-watch-main-content">
+						<div class="card">
+							<div class="tech-watch-problem">
+								<p>
+									<strong>Problématique :</strong>
+									Comment la transformation du web, grâce aux frameworks modernes et aux technologies réactives, a-t-elle redéfini l'expérience utilisateur et les pratiques du développement web ?
+								</p>
+							</div>
+
+							<h3 class="subhead">Introduction</h3>
+							<p class="tech-watch-intro">
+								Depuis sa création dans les années 1990, le web a connu une évolution constante. À ses débuts, il se présentait sous la forme de pages statiques, principalement composées de texte et d'images, dont le contenu ne changeait qu'en rechargeant la page. Ce modèle simple, adapté aux débuts d'Internet, limitait néanmoins les possibilités d'interaction et d'expérience utilisateur.
+							</p>
+							<p class="tech-watch-intro">
+								Avec le temps, les attentes des internautes ont évolué : ils recherchent désormais des interfaces plus fluides, réactives et proches d'applications natives. Cette transformation a conduit à l'émergence d'un
+								<strong>nouveau paradigme de développement</strong>, porté par
+								<em>JavaScript</em>
+								et des
+								<em>frameworks modernes</em>
+								tels que React, Vue.js ou Next.js. Ces outils ont permis de créer des applications web dites
+								<em>réactives</em>, capables de mettre à jour leur contenu instantanément, sans rechargement complet, rendant l'expérience beaucoup plus dynamique.
+							</p>
+
+							<div class="tech-watch-separator"></div>
+
+							<h3 class="subhead">I. Le web traditionnel : une architecture statique</h3>
+							<p class="tech-watch-intro">
+								Les premiers sites web utilisaient des pages HTML statiques ou des systèmes de template générant des pages côté serveur. Chaque interaction nécessitait souvent un rechargement complet de la page, ce qui impliquait une expérience utilisateur hachée et des temps d'attente peu agréables. Les architectures classiques (LAMP, PHP, pages HTML statiques) ont montré leurs limites face aux attentes modernes en termes de fluidité et d'interactivité.
+							</p>
+
+							<h3 class="subhead">II. L'émergence du web réactif</h3>
+							<p class="tech-watch-intro">
+								L'arrivée de JavaScript moderne et des frameworks front-end a changé la donne. Les Single Page Applications (SPA) permettent de charger une seule page HTML initiale, puis de mettre à jour dynamiquement le DOM côté client. Cette approche a grandement amélioré la réactivité mais a parfois créé des problèmes de référencement, de performances initiales et d'accessibilité.
+							</p>
+							<p class="tech-watch-intro">
+								C'est dans ce contexte que des approches hybrides et le rendu côté serveur (SSR) ont émergé pour combiner les avantages du rendu initial côté serveur (SEO, performance initiale) et de la réactivité côté client. Des frameworks comme Next.js incarnent cette tendance en proposant des modes de rendu variés et des optimisations pour le web moderne.
+							</p>
+
+							<h3 class="subhead">III. Vers un web temps réel et intelligent</h3>
+							<p class="tech-watch-intro">
+								La prochaine étape est l'intégration du temps réel et des expériences « live » : WebSocket, Server-Sent Events, streaming, et architectures orientées événements rendent possibles des interfaces qui se mettent à jour instantanément en réponse à des changements côté serveur. Parallèlement, l'arrivée des React Server Components, des Server Actions, et des runtimes edge (Cloudflare Workers, Vercel Edge Functions) permet une distribution plus fine des responsabilités entre client et serveur, optimisant la latence et l'utilisation des ressources.
+							</p>
+							<p class="tech-watch-intro">
+								Ces changements modifient également la façon de concevoir les interfaces : l'UX devient plus fluide, les transitions plus subtiles, et le produit final ressemble davantage à une application native qu'à une simple collection de pages web.
+							</p>
+
+							<h3 class="subhead">IV. Avantages & limites</h3>
+							<p class="tech-watch-intro">
+								<strong>Avantages :</strong>
+								meilleure expérience utilisateur, interactions plus riches, possibilité d'architectures fullstack JavaScript, déploiement serverless, et optimisation progressive des performances.
+							</p>
+							<p class="tech-watch-intro">
+								<strong>Limites :</strong>
+								complexité de l'architecture, coûts cognitifs supplémentaires pour l'optimisation, risques SEO si mal configuré, et enjeux d'accessibilité à prendre en compte.
+							</p>
+
+							<h3 class="subhead">Conclusion</h3>
+							<p class="tech-watch-intro">
+								La transition vers un web plus réactif est autant une révolution technique qu'une évolution des usages. Les frameworks modernes et les technologies temps réel ont transformé le rôle du développeur, la conception des applications et l'expérience finale. Pour les professionnels et étudiants en développement, comprendre cette mutation est essentiel pour concevoir des applications performantes, accessibles et maintenables.
+							</p>
+						</div>
+
+						<div class="card">
+							<h3 class="subhead">Méthodologie de collecte d'informations</h3>
+							<div class="tech-watch-method">
+								<p>Pour mener cette veille technologique, j'ai utilisé plusieurs moyens complémentaires, privilégiant des outils variés pour rester informé en continu :</p>
+
+								<div class="methodology-cards">
+									<div class="methodology-card" data-method-id="rss">
+										<div class="methodology-card-image">
+											<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M4 11a9 9 0 0 1 9 9"></path>
+												<path d="M4 4a16 16 0 0 1 16 16"></path>
+												<circle cx="5" cy="19" r="1"></circle>
+											</svg>
+										</div>
+										<div class="methodology-card-content">
+											<h4 class="methodology-card-title">Flux RSS et agrégateurs</h4>
+											<p class="methodology-card-description">Souscription à de nombreux flux RSS (blogs techniques, mises à jour de frameworks, sites spécialisés), regroupés et suivis avec Feedly pour centraliser la consultation.</p>
+										</div>
+									</div>
+
+									<div class="methodology-card" data-method-id="alerts">
+										<div class="methodology-card-image">
+											<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+												<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+											</svg>
+										</div>
+										<div class="methodology-card-content">
+											<h4 class="methodology-card-title">Alertes automatiques</h4>
+											<p class="methodology-card-description">Utilisation de Google Alerts pour être notifié des publications et nouveautés sur des mots-clés comme Next.js, React Server Components, serverless, etc.</p>
+										</div>
+									</div>
+
+									<div class="methodology-card" data-method-id="community">
+										<div class="methodology-card-image">
+											<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+												<circle cx="9" cy="7" r="4"></circle>
+												<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+												<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+											</svg>
+										</div>
+										<div class="methodology-card-content">
+											<h4 class="methodology-card-title">Veille communautaire</h4>
+											<p class="methodology-card-description">Consultation régulière de communautés tech telles que Hacker News, GitHub Trends, forums spécialisés... <strong>et chaînes YouTube comme Fireship</strong> pour identifier et illustrer rapidement les innovations du secteur.</p>
+										</div>
+									</div>
+
+									<div class="methodology-card" data-method-id="synthesis">
+										<div class="methodology-card-image">
+											<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+												<polyline points="14 2 14 8 20 8"></polyline>
+												<line x1="16" y1="13" x2="8" y2="13"></line>
+												<line x1="16" y1="17" x2="8" y2="17"></line>
+												<polyline points="10 9 9 9 8 9"></polyline>
+											</svg>
+										</div>
+										<div class="methodology-card-content">
+											<h4 class="methodology-card-title">Synthèse personnelle</h4>
+											<p class="methodology-card-description">Croisement des informations, organisation des ressources par thématique, rédaction de fiches et production d'un document de synthèse structuré en vue de la présentation.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="card">
+							<h3 class="subhead">Définitions</h3>
+							<dl class="tech-watch-definitions">
+								<div class="tech-watch-def">
+									<dt>Web statique</dt>
+									<dd>Ensemble de pages HTML dont le contenu ne change que lors d'un rechargement ou d'une nouvelle génération côté serveur.</dd>
+								</div>
+								<div class="tech-watch-def">
+									<dt>Web réactif</dt>
+									<dd>Ensemble de techniques permettant la mise à jour instantanée du contenu sans rechargement de page, offrant une expérience proche des applications natives.</dd>
+								</div>
+								<div class="tech-watch-def">
+									<dt>Framework JavaScript</dt>
+									<dd>Outil facilitant la création d'applications web dynamiques (ex : React, Vue, Svelte).</dd>
+								</div>
+								<div class="tech-watch-def">
+									<dt>Next.js</dt>
+									<dd>Framework React fullstack qui propose le rendu côté serveur, le rendu statique, les API routes et des optimisations pour la performance.</dd>
+								</div>
+								<div class="tech-watch-def">
+									<dt>React Server Components</dt>
+									<dd>Composants React qui s'exécutent côté serveur et produisent un rendu partiel envoyé au client pour améliorer les performances et la sécurité des données.</dd>
+								</div>
+								<div class="tech-watch-def">
+									<dt>Server Actions</dt>
+									<dd>Mécanisme permettant d'exécuter du code côté serveur en réponse à des actions utilisateur, simplifiant la logique fullstack.</dd>
+								</div>
+							</dl>
+						</div>
+					</div>
+
+
+				</div>
+
+				<div class="card" style="margin-top: 1.5rem;">
+					<h3 class="subhead">Articles en ligne (sélection)</h3>
+					<p>
+						Voici quelques articles de ma veille technologique
+					</p>
+
+					<div class="search-filter-container">
+						<div class="search-box">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+							</svg>
+							<input type="text" id="searchInput" placeholder="Rechercher un article, auteur ou mot-clé...">
+						</div>
+						<div class="sort-container">
+							<span class="sort-label">Trier par :</span>
+							<select id="sortSelect" class="sort-select">
+								<option value="date-desc">Date (plus récent)</option>
+								<option value="date-asc">Date (plus ancien)</option>
+								<option value="author-asc">Auteur (A-Z)</option>
+								<option value="author-desc">Auteur (Z-A)</option>
+								<option value="title-asc">Titre (A-Z)</option>
+								<option value="title-desc">Titre (Z-A)</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="tech-watch-articles-grid" id="articlesGrid">
+						{% for article in articles %}
+							<article class="tech-watch-article"
+								data-title="{{ article.title }}"
+								data-author="{{ article.author }}"
+								data-description="{{ article.description }}"
+								data-date="{{ article.publishedAt|date('Y-m-d') }}">
+								{% if article.image %}
+									<img src="{{ asset('uploads/' ~ article.image) }}" alt="{{ article.title }}" class="article-image" loading="lazy">
+								{% else %}
+									<div class="article-image" style="background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;">
+										<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+											<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+											<polyline points="14 2 14 8 20 8"></polyline>
+											<line x1="16" y1="13" x2="8" y2="13"></line>
+											<line x1="16" y1="17" x2="8" y2="17"></line>
+										</svg>
+									</div>
+								{% endif %}
+								<div class="article-content">
+									<div class="article-header">
+										<div class="article-meta">
+											<span class="article-meta-item">
+												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+												</svg>
+												{{ article.author }}
+											</span>
+											<span class="article-meta-item">
+												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+												</svg>
+												{{ article.publishedAt|date('d M Y') }}
+											</span>
+										</div>
+										<h3>{{ article.title }}</h3>
+									</div>
+									<p>{{ article.description }}</p>
+									<div class="article-footer">
+										<a href="{{ article.articleUrl }}" target="_blank" rel="noreferrer noopener">Voir l'article</a>
+									</div>
+								</div>
+							</article>
+						{% endfor %}
+					</div>
+					<div class="no-results" id="noResults" style="display: none;">
+						Aucun article ne correspond à votre recherche ou filtre.
+					</div>
+				</div>
+
+
+			</div>
+		</section>
+	</main>
+
+	<!-- Modal for methodology details -->
+	<div class="image-selector-modal" id="methodologyModal">
+		<div class="modal-dialog">
+			<div class="modal-header fade-up delay-350">
+				<h2 class="modal-title" id="modalMethodTitle"></h2>
+				<button class="modal-close" id="modalMethodClose">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			<div class="modal-body fade-up delay-400">
+				<div class="prose" id="modalMethodContent">
+					<div class="loading">Chargement...</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script nonce="{{ csp_nonce() }}">
+		document.addEventListener('DOMContentLoaded', function() {
+			const searchInput = document.getElementById('searchInput');
+			const sortSelect = document.getElementById('sortSelect');
+			const articlesGrid = document.getElementById('articlesGrid');
+			const noResults = document.getElementById('noResults');
+
+			let currentSearch = '';
+			let articlesArray = Array.from(articlesGrid.children);
+
+			// Fonction pour filtrer et trier les articles
+			function filterAndSortArticles() {
+				let visibleArticles = [];
+
+				// Filtrage par recherche
+				articlesArray.forEach(article => {
+					const title = article.dataset.title.toLowerCase();
+					const author = article.dataset.author.toLowerCase();
+					const description = article.dataset.description.toLowerCase();
+
+					const matchesSearch = currentSearch === '' ||
+						title.includes(currentSearch) ||
+						author.includes(currentSearch) ||
+						description.includes(currentSearch);
+
+					if (matchesSearch) {
+						visibleArticles.push(article);
+						article.classList.remove('hidden');
+					} else {
+						article.classList.add('hidden');
+					}
+				});
+
+				// Tri des articles visibles
+				const sortValue = sortSelect.value;
+				visibleArticles.sort((a, b) => {
+					switch(sortValue) {
+						case 'date-desc':
+							return new Date(b.dataset.date) - new Date(a.dataset.date);
+						case 'date-asc':
+							return new Date(a.dataset.date) - new Date(b.dataset.date);
+						case 'author-asc':
+							return a.dataset.author.localeCompare(b.dataset.author);
+						case 'author-desc':
+							return b.dataset.author.localeCompare(a.dataset.author);
+						case 'title-asc':
+							return a.dataset.title.localeCompare(b.dataset.title);
+						case 'title-desc':
+							return b.dataset.title.localeCompare(a.dataset.title);
+						default:
+							return 0;
+					}
+				});
+
+				// Réorganiser le DOM
+				visibleArticles.forEach(article => {
+					articlesGrid.appendChild(article);
+				});
+
+				// Ajouter les articles cachés à la fin
+				articlesArray.forEach(article => {
+					if (article.classList.contains('hidden')) {
+						articlesGrid.appendChild(article);
+					}
+				});
+
+				// Afficher le message "Aucun résultat" si nécessaire
+				if (visibleArticles.length === 0) {
+					noResults.style.display = 'block';
+					articlesGrid.style.display = 'none';
+				} else {
+					noResults.style.display = 'none';
+					articlesGrid.style.display = 'grid';
+				}
+			}
+
+			// Gestion de la recherche
+			searchInput.addEventListener('input', function(e) {
+				currentSearch = e.target.value.toLowerCase().trim();
+				filterAndSortArticles();
+			});
+
+			// Gestion du tri
+			sortSelect.addEventListener('change', function() {
+				filterAndSortArticles();
+			});
+
+			// Tri initial
+			filterAndSortArticles();
+
+			// Gestion de la modale méthodologie
+			const methodologyCards = document.querySelectorAll('.methodology-card');
+			const methodologyModal = document.getElementById('methodologyModal');
+			const modalMethodClose = document.getElementById('modalMethodClose');
+			const modalMethodTitle = document.getElementById('modalMethodTitle');
+			const modalMethodContent = document.getElementById('modalMethodContent');
+
+			// Définition du contenu détaillé pour chaque méthode
+			const methodologyDetails = {
+				rss: {
+					title: 'Flux RSS et agrégateurs',
+					content: `
+						<h3>Qu'est-ce qu'un flux RSS ?</h3>
+						<p>RSS (Really Simple Syndication) est un format de données utilisé pour diffuser du contenu web mis à jour fréquemment. Les flux RSS permettent de centraliser et suivre les mises à jour de plusieurs sites web sans avoir à les visiter un par un.</p>
+
+						<h3>Mon utilisation de Feedly</h3>
+						<p>J'utilise <strong>Feedly</strong> comme agrégateur principal pour organiser ma veille technologique. Cet outil me permet de :</p>
+						<ul>
+							<li>Suivre plus de 50 sources d'information tech (blogs, sites officiels de frameworks, médias spécialisés)</li>
+							<li>Organiser mes flux par catégories (Frontend, Backend, DevOps, Tendances, etc.)</li>
+							<li>Marquer les articles importants pour une lecture ultérieure</li>
+							<li>Recevoir des notifications pour les sources prioritaires</li>
+						</ul>
+
+						<h3>Sources principales suivies</h3>
+						<ul>
+							<li><strong>Official Blogs:</strong> Next.js Blog, React Blog, Vercel Blog</li>
+							<li><strong>Tech Media:</strong> CSS-Tricks, Smashing Magazine, Dev.to</li>
+							<li><strong>Developer Blogs:</strong> Kent C. Dodds, Dan Abramov, Josh W. Comeau</li>
+							<li><strong>Newsletters:</strong> JavaScript Weekly, Frontend Focus, React Status</li>
+						</ul>
+
+						<h3>Avantages de cette méthode</h3>
+						<p>Cette approche me permet de rester informé en temps réel des dernières nouveautés, tout en gardant une vue d'ensemble organisée de l'écosystème JavaScript moderne.</p>
+					`
+				},
+				alerts: {
+					title: 'Alertes automatiques',
+					content: `
+						<h3>Fonctionnement de Google Alerts</h3>
+						<p><strong>Google Alerts</strong> est un service gratuit qui envoie des notifications par email lorsque de nouveaux contenus correspondant à vos mots-clés apparaissent sur le web.</p>
+
+						<h3>Configuration de mes alertes</h3>
+						<p>J'ai configuré plusieurs alertes stratégiques pour suivre l'évolution des technologies qui m'intéressent :</p>
+						<ul>
+							<li><strong>"Next.js 15"</strong> - pour suivre les annonces de la dernière version</li>
+							<li><strong>"React Server Components"</strong> - pour les articles sur cette nouvelle architecture</li>
+							<li><strong>"Server Actions Next.js"</strong> - pour les tutoriels et cas d'usage</li>
+							<li><strong>"Vercel Edge Functions"</strong> - pour les innovations serverless</li>
+							<li><strong>"Web Performance 2025"</strong> - pour les tendances en optimisation</li>
+						</ul>
+
+						<h3>Paramètres d'optimisation</h3>
+						<ul>
+							<li><strong>Fréquence:</strong> Notifications quotidiennes pour éviter le spam</li>
+							<li><strong>Sources:</strong> Résultats les plus pertinents uniquement</li>
+							<li><strong>Langue:</strong> Anglais et Français</li>
+							<li><strong>Région:</strong> Mondiale pour avoir une vue globale</li>
+						</ul>
+
+						<h3>Complémentarité avec les flux RSS</h3>
+						<p>Contrairement aux flux RSS qui suivent des sources spécifiques, Google Alerts surveille l'ensemble du web pour des termes précis, ce qui permet de découvrir de nouvelles sources et perspectives.</p>
+					`
+				},
+				community: {
+					title: 'Veille communautaire',
+					content: `
+						<h3>Importance de la veille communautaire</h3>
+						<p>Les communautés tech sont souvent les premières à discuter des nouvelles tendances, partager des retours d'expérience et identifier les technologies émergentes avant qu'elles ne deviennent mainstream.</p>
+
+						<h3>Plateformes consultées quotidiennement</h3>
+
+						<h4>Hacker News</h4>
+						<p>Plateforme de discussion tech très populaire où sont partagés articles, projets et débats. Je consulte particulièrement :</p>
+						<ul>
+							<li>La page "Front Page" pour les tendances du jour</li>
+							<li>La section "Show HN" pour découvrir de nouveaux projets</li>
+							<li>Les commentaires qui apportent souvent des perspectives expertes</li>
+						</ul>
+
+						<h4>GitHub Trends</h4>
+						<p>Permet de suivre les projets open source qui gagnent en popularité :</p>
+						<ul>
+							<li>Trending repositories (quotidien/hebdomadaire/mensuel)</li>
+							<li>Filtrage par langage (JavaScript, TypeScript, etc.)</li>
+							<li>Analyse des stars et des commits pour évaluer l'activité</li>
+						</ul>
+
+						<h4>Reddit (r/webdev, r/reactjs, r/nextjs)</h4>
+						<p>Communautés actives où développeurs partagent problèmes, solutions et discussions :</p>
+						<ul>
+							<li>Questions techniques et résolutions de problèmes</li>
+							<li>Annonces de nouvelles versions</li>
+							<li>Débats sur les meilleures pratiques</li>
+						</ul>
+
+						<h4>Discord & Slack Communities</h4>
+						<p>Participation à plusieurs serveurs Discord (Next.js, React, etc.) pour :</p>
+						<ul>
+							<li>Poser des questions en temps réel</li>
+							<li>Suivre les discussions des core contributors</li>
+							<li>Participer aux bêta-tests de nouvelles features</li>
+						</ul>
+
+						<h4>YouTube & Vidéos Dev (Fireship...)</h4>
+						<p>Je suis également des chaînes YouTube orientées développement pour suivre l'actu tech avec des formats réactifs et ludiques. Par exemple, la chaîne <strong>Fireship</strong> propose régulièrement des vidéos de qualité sur les tendances JavaScript/web modernes :</p>
+						<div style="margin: 1.5rem 0;">
+							<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid #e5e7eb;background:#111;">
+								<iframe src="https://www.youtube.com/embed/IIj9UWpvSFI?si=85dA4SzGGw_YVg-d"
+										title="Comprendre React Server Components en 100 secondes"
+										allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+										referrerpolicy="strict-origin-when-cross-origin"
+										allowfullscreen
+										frameborder="0"
+										style="position:absolute;top:0;left:0;width:100%;height:100%;">
+								</iframe>
+							</div>
+						</div>
+						<p>Ce support vidéo permet de comprendre rapidement les nouveautés ou de s'inspirer de cas pratiques.</p>
+
+						<h3>Bénéfices de cette approche</h3>
+						<p>Cette veille communautaire me permet non seulement de rester informé, mais aussi d'apprendre des expériences des autres développeurs et de comprendre les vrais problèmes rencontrés sur le terrain.</p>
+					`
+				},
+				synthesis: {
+					title: 'Synthèse personnelle',
+					content: `
+						<h3>Méthodologie de synthèse</h3>
+						<p>La collecte d'informations n'est qu'une première étape. Pour en tirer réellement parti, j'ai développé un processus de synthèse structuré.</p>
+
+						<h3>Organisation des ressources</h3>
+
+						<h4>1. Tri et classification</h4>
+						<p>Chaque information collectée est catégorisée selon :</p>
+						<ul>
+							<li><strong>Thématique:</strong> Frontend, Backend, Performance, Architecture, etc.</li>
+							<li><strong>Priorité:</strong> Important, À explorer, Veille générale</li>
+							<li><strong>Type:</strong> Tutoriel, Article d'opinion, Documentation officielle, Retour d'expérience</li>
+						</ul>
+
+						<h4>2. Outil de gestion : Notion</h4>
+						<p>J'utilise <strong>Notion</strong> pour centraliser ma veille :</p>
+						<ul>
+							<li>Base de données des articles avec tags, dates, et notes</li>
+							<li>Pages de synthèse par technologie</li>
+							<li>Roadmap d'apprentissage personnelle</li>
+							<li>Liens vers les ressources les plus pertinentes</li>
+						</ul>
+
+						<h3>Rédaction de fiches de synthèse</h3>
+						<p>Pour chaque sujet important, je rédige une fiche comprenant :</p>
+						<ul>
+							<li><strong>Contexte:</strong> Pourquoi ce sujet est important</li>
+							<li><strong>Concepts clés:</strong> Les points essentiels à retenir</li>
+							<li><strong>Avantages/Limites:</strong> Analyse critique</li>
+							<li><strong>Cas d'usage:</strong> Quand et comment l'utiliser</li>
+							<li><strong>Ressources:</strong> Liens vers les meilleurs articles/tutoriels</li>
+						</ul>
+
+						<h3>Production du document final</h3>
+						<p>À partir de mes notes et fiches, j'ai produit ce document de veille structuré qui présente :</p>
+						<ul>
+							<li>Une problématique claire</li>
+							<li>Un historique de l'évolution technologique</li>
+							<li>Une analyse des tendances actuelles</li>
+							<li>Une sélection des articles les plus pertinents</li>
+							<li>Des définitions des concepts clés</li>
+						</ul>
+
+						<h3>Mise à jour continue</h3>
+						<p>Cette veille n'est pas statique : je mets à jour régulièrement mes fiches et ma base de données pour suivre l'évolution rapide du web moderne.</p>
+
+						<h3>Application pratique</h3>
+						<p>Les connaissances acquises via cette veille sont directement appliquées dans mes projets personnels et professionnels, créant un cycle vertueux d'apprentissage et de pratique.</p>
+					`
+				}
+			};
+
+			methodologyCards.forEach(card => {
+				card.addEventListener('click', function() {
+					const methodId = this.dataset.methodId;
+					const method = methodologyDetails[methodId];
+
+					if (method) {
+						modalMethodTitle.textContent = method.title;
+						modalMethodContent.innerHTML = method.content;
+						methodologyModal.classList.add('active');
+					}
+				});
+			});
+
+			modalMethodClose.addEventListener('click', () => methodologyModal.classList.remove('active'));
+
+			// Fermer la modale en cliquant en dehors
+			methodologyModal.addEventListener('click', (e) => {
+				if (e.target === methodologyModal) {
+					methodologyModal.classList.remove('active');
+				}
+			});
+		});
+	</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+services:
+  php:
+    build:
+      context: .
+      target: frankenphp_prod
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-localhost}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD:-portfolio}@database:5432/${POSTGRES_DB:-portfolio}?serverVersion=${POSTGRES_VERSION:-16}&charset=utf8
+      APP_SECRET: ${APP_SECRET:-5ec898d0f73d9d85e32793f28b18da8515ddca64be1caac7627ee7b543322c49}
+    depends_on:
+      - database
+
+  database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio}
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

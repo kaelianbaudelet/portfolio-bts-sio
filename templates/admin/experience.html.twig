@@ -1,0 +1,83 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Expériences{% endblock %}
+{% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-page-title">Expériences professionnelles</h1>
+        <p class="admin-page-subtitle">Gérez votre parcours professionnel</p>
+    </div>
+    <a href="{{ path('admin_experience_new') }}" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nouvelle expérience
+    </a>
+</div>
+<div class="admin-section">
+    {% if experiences|length == 0 %}
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <h3>Aucune expérience</h3>
+            <p>Commencez par ajouter votre première expérience professionnelle</p>
+            <a href="{{ path('admin_experience_new') }}" class="btn btn-primary">Ajouter une expérience</a>
+        </div>
+    {% else %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Poste</th>
+                    <th>Entreprise</th>
+                    <th>Période</th>
+                    <th>Ordre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for experience in experiences %}
+                <tr id="experience-{{ experience.id }}">
+                    <td><strong>{{ experience.position }}</strong></td>
+                    <td>{{ experience.company }}</td>
+                    <td>{{ experience.startDate }} - {{ experience.endDate }}</td>
+                    <td>{{ experience.displayOrder }}</td>
+                    <td>
+                        <div class="admin-table-actions">
+                            <a href="{{ path('admin_experience_edit', {id: experience.id}) }}" class="admin-table-action" title="Modifier">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </a>
+                            <button onclick="deleteExperience({{ experience.id }})" class="admin-table-action admin-table-action-danger" title="Supprimer">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block javascripts %}
+<script nonce="{{ csp_nonce() }}">
+async function deleteExperience(id) {
+    if (!confirm('Voulez-vous vraiment supprimer cette expérience ?')) return;
+    try {
+        const response = await fetch(`/admin/experience/${id}/delete`, {method: 'POST'});
+        if (response.ok) document.getElementById(`experience-${id}`).remove();
+    } catch (error) {
+        alert('Erreur lors de la suppression.');
+    }
+}
+</script>
+{% endblock %}

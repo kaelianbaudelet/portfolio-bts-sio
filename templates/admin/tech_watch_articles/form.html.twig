@@ -1,0 +1,438 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}
+	{{ article ? 'Modifier' : 'Nouvel' }} article de veille
+{% endblock %}
+
+{% block body %}
+	<div class="admin-header">
+		<div>
+			<h1 class="admin-page-title">{{ article ? 'Modifier l\'article' : 'Nouvel article' }}</h1>
+			<p class="admin-page-subtitle">{{ article ? 'Modifiez les informations de l\'article' : 'Ajoutez un nouvel article de veille technologique' }}</p>
+		</div>
+	</div>
+
+	<div class="admin-form-container">
+		<form method="post" class="admin-form">
+			<div class="admin-form-grid">
+				<div class="form-group">
+					<label for="title" class="form-label">Titre de l'article *</label>
+					<input type="text" id="title" name="title" class="form-input" required value="{{ article ? article.title : '' }}">
+				</div>
+
+				<div class="form-group">
+					<label for="author" class="form-label">Auteur *</label>
+					<input type="text" id="author" name="author" class="form-input" required value="{{ article ? article.author : '' }}">
+				</div>
+			</div>
+
+			<div class="admin-form-grid">
+				<div class="form-group">
+					<label for="publishedAt" class="form-label">Date de publication *</label>
+					<input type="date" id="publishedAt" name="publishedAt" class="form-input" required value="{{ article and article.publishedAt ? article.publishedAt|date('Y-m-d') : '' }}">
+					<small class="form-help">Date de publication de l'article</small>
+				</div>
+
+				<div class="form-group">
+					<label for="displayOrder" class="form-label">Ordre d'affichage</label>
+					<input type="number" id="displayOrder" name="displayOrder" class="form-input" value="{{ article ? article.displayOrder : 0 }}">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="articleUrl" class="form-label">URL de l'article *</label>
+				<input type="url" id="articleUrl" name="articleUrl" class="form-input" required value="{{ article ? article.articleUrl : '' }}" placeholder="https://example.com/article">
+				<small class="form-help">Lien vers l'article complet</small>
+			</div>
+
+			<div class="form-group">
+				<label for="description" class="form-label">Description *</label>
+				<textarea id="description" name="description" class="form-textarea" rows="4" required>{{ article ? article.description : '' }}</textarea>
+				<small class="form-help">Description courte de l'article (visible sur la carte)</small>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Image de l'article</label>
+				<input type="hidden" id="image" name="image" value="{{ article ? article.image : '' }}">
+
+				<div class="image-selector-container">
+					<div class="image-preview" id="imagePreview">
+						{% if article and article.image %}
+							<img src="{{ asset('uploads/' ~ article.image) }}" alt="Aperçu">
+							<button type="button" class="image-remove-btn" id="removeImage">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<line x1="18" y1="6" x2="6" y2="18"></line>
+									<line x1="6" y1="6" x2="18" y2="18"></line>
+								</svg>
+							</button>
+						{% else %}
+							<div class="image-placeholder">
+								<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+									<circle cx="8.5" cy="8.5" r="1.5"></circle>
+									<polyline points="21 15 16 10 5 21"></polyline>
+								</svg>
+								<p>Aucune image sélectionnée</p>
+							</div>
+						{% endif %}
+					</div>
+					<button type="button" class="btn btn-secondary" id="selectImageBtn">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+							<circle cx="8.5" cy="8.5" r="1.5"></circle>
+							<polyline points="21 15 16 10 5 21"></polyline>
+						</svg>
+						Choisir une image
+					</button>
+				</div>
+				<small class="form-help">Image d'illustration pour l'article (format recommandé : 400x200px)</small>
+			</div>
+
+			<div class="form-group">
+				<label class="admin-checkbox">
+					<input type="checkbox" name="isVisible" value="1" {{ article is null or article.isVisible ? 'checked' : '' }}>
+					<span>Visible sur le site public</span>
+				</label>
+			</div>
+
+			<div class="admin-form-actions">
+				<button type="submit" class="btn btn-primary btn-large">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+						<polyline points="17 21 17 13 7 13 7 21"></polyline>
+						<polyline points="7 3 7 8 15 8"></polyline>
+					</svg>
+					{{ article ? 'Mettre à jour' : 'Créer l\'article' }}
+				</button>
+				<a href="{{ path('admin_tech_watch_articles') }}" class="btn btn-secondary btn-large">Annuler</a>
+			</div>
+		</form>
+	</div>
+
+	<!-- Modal réutilisable pour sélection de fichiers/images -->
+	<div class="media-selector-modal" id="mediaSelectorModal">
+		<div class="modal-dialog">
+			<div class="modal-header">
+				<h3 class="modal-title" id="modalTitle">Sélectionner une image</h3>
+				<button type="button" class="modal-close" id="closeModalBtn">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+
+			<div class="modal-tabs">
+				<button class="modal-tab active" data-tab="gallery">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+						<circle cx="8.5" cy="8.5" r="1.5"></circle>
+						<polyline points="21 15 16 10 5 21"></polyline>
+					</svg>
+					Galerie
+				</button>
+				<button class="modal-tab" data-tab="upload">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="17 8 12 3 7 8"></polyline>
+						<line x1="12" y1="3" x2="12" y2="15"></line>
+					</svg>
+					Upload
+				</button>
+			</div>
+
+			<div class="modal-body">
+				<!-- Gallery Tab -->
+				<div class="modal-tab-content active" id="galleryTab">
+					<div class="modal-gallery-grid" id="modalGalleryGrid">
+						<div class="loading-spinner">Chargement...</div>
+					</div>
+				</div>
+
+				<!-- Upload Tab -->
+				<div class="modal-tab-content" id="uploadTab">
+					<div class="modal-upload-area">
+						<div class="upload-drop-zone" id="modalDropZone">
+							<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="17 8 12 3 7 8"></polyline>
+								<line x1="12" y1="3" x2="12" y2="15"></line>
+							</svg>
+							<p class="upload-text">Glissez-déposez vos fichiers ici</p>
+							<p class="upload-subtext">ou</p>
+							<button type="button" class="btn btn-primary" id="modalSelectFileBtn">
+								Sélectionner des fichiers
+							</button>
+							<input type="file" id="modalFileInput" multiple style="display: none;">
+							<p class="upload-hint" id="modalUploadHint">JPG, PNG, GIF, WebP ou SVG (Max 5MB)</p>
+						</div>
+
+						<div class="upload-progress" id="modalUploadProgress" style="display: none;">
+							<div class="upload-progress-bar">
+								<div class="upload-progress-fill" id="modalProgressFill"></div>
+							</div>
+							<p id="modalUploadStatus">Upload en cours...</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer" id="modalFooter" style="display: none;">
+				<button type="button" class="btn btn-secondary" id="modalCancelBtn">Annuler</button>
+				<button type="button" class="btn btn-primary" id="modalValidateBtn">
+					Sélectionner
+					<span id="selectedCount"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block javascripts %}
+	<script nonce="{{ csp_nonce() }}">
+		// Configuration
+		const SINGLE_SELECT_MODE = true;
+		let currentMediaType = 'image';
+		let selectedMedia = [];
+
+		// Elements
+		const modal = document.getElementById('mediaSelectorModal');
+		const closeBtn = document.getElementById('closeModalBtn');
+		const cancelBtn = document.getElementById('modalCancelBtn');
+		const validateBtn = document.getElementById('modalValidateBtn');
+		const galleryGrid = document.getElementById('modalGalleryGrid');
+		const modalFooter = document.getElementById('modalFooter');
+		const selectImageBtn = document.getElementById('selectImageBtn');
+
+		// Tab switching
+		document.querySelectorAll('.modal-tab').forEach(tab => {
+			tab.addEventListener('click', () => {
+				const targetTab = tab.dataset.tab;
+
+				document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+				document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+
+				tab.classList.add('active');
+				document.getElementById(targetTab + 'Tab').classList.add('active');
+			});
+		});
+
+		// Upload functionality
+		const dropZone = document.getElementById('modalDropZone');
+		const fileInput = document.getElementById('modalFileInput');
+		const selectFileBtn = document.getElementById('modalSelectFileBtn');
+		const uploadProgress = document.getElementById('modalUploadProgress');
+		const progressFill = document.getElementById('modalProgressFill');
+		const uploadStatus = document.getElementById('modalUploadStatus');
+
+		selectFileBtn.addEventListener('click', () => fileInput.click());
+
+		fileInput.addEventListener('change', (e) => {
+			if (e.target.files.length > 0) {
+				uploadFiles(e.target.files);
+			}
+		});
+
+		dropZone.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			dropZone.classList.add('dragover');
+		});
+
+		dropZone.addEventListener('dragleave', () => {
+			dropZone.classList.remove('dragover');
+		});
+
+		dropZone.addEventListener('drop', (e) => {
+			e.preventDefault();
+			dropZone.classList.remove('dragover');
+			if (e.dataTransfer.files.length > 0) {
+				uploadFiles(e.dataTransfer.files);
+			}
+		});
+
+		async function uploadFiles(files) {
+			dropZone.style.display = 'none';
+			uploadProgress.style.display = 'block';
+			progressFill.style.width = '0%';
+			uploadStatus.textContent = 'Upload en cours...';
+
+			let completed = 0;
+			const total = files.length;
+
+			for (const file of files) {
+				const formData = new FormData();
+				formData.append('file', file);
+				formData.append('fileType', currentMediaType);
+
+				try {
+					const response = await fetch('/admin/media/upload', {
+						method: 'POST',
+						body: formData
+					});
+
+					const data = await response.json();
+
+					if (!data.success && data.error) {
+						throw new Error(data.error);
+					}
+
+					completed++;
+					progressFill.style.width = `${(completed / total) * 100}%`;
+					uploadStatus.textContent = `Upload ${completed}/${total}...`;
+				} catch (error) {
+					console.error('Upload error:', error);
+					alert('Erreur lors de l\'upload: ' + error.message);
+				}
+			}
+
+			uploadStatus.textContent = 'Upload terminé !';
+			progressFill.style.width = '100%';
+
+			setTimeout(() => {
+				switchToGalleryTab();
+				loadMediaGallery();
+				uploadProgress.style.display = 'none';
+				dropZone.style.display = 'flex';
+				progressFill.style.width = '0%';
+				fileInput.value = '';
+			}, 1000);
+		}
+
+		function switchToGalleryTab() {
+			document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+			document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+			document.querySelector('.modal-tab[data-tab="gallery"]').classList.add('active');
+			document.getElementById('galleryTab').classList.add('active');
+		}
+
+		// Open modal
+		selectImageBtn.addEventListener('click', () => {
+			currentMediaType = 'image';
+			selectedMedia = [];
+			openModal();
+		});
+
+		function openModal() {
+			modal.classList.add('active');
+			document.body.style.overflow = 'hidden';
+			loadMediaGallery();
+			updateValidateButton();
+		}
+
+		function closeModal() {
+			modal.classList.remove('active');
+			document.body.style.overflow = '';
+			selectedMedia = [];
+		}
+
+		closeBtn.addEventListener('click', closeModal);
+		cancelBtn.addEventListener('click', closeModal);
+
+		modal.addEventListener('click', (e) => {
+			if (e.target === modal) {
+				closeModal();
+			}
+		});
+
+		// Load media
+		async function loadMediaGallery() {
+			galleryGrid.innerHTML = '<div class="loading-spinner">Chargement...</div>';
+
+			try {
+				const response = await fetch('/admin/media/api/images');
+				const data = await response.json();
+				const files = data.images || [];
+
+				if (files.length === 0) {
+					galleryGrid.innerHTML = '<div class="no-files">Aucune image disponible</div>';
+					modalFooter.style.display = 'none';
+					return;
+				}
+
+				galleryGrid.innerHTML = files.map(file => {
+					return `
+						<div class="modal-gallery-item" data-filename="${file.name}" data-url="${file.url}">
+							<img src="${file.url}" alt="${file.name}">
+							<div class="file-name">${file.name}</div>
+						</div>
+					`;
+				}).join('');
+
+				modalFooter.style.display = 'flex';
+			} catch (error) {
+				console.error('Error loading media:', error);
+				galleryGrid.innerHTML = '<div class="error-message">Erreur lors du chargement des médias</div>';
+			}
+		}
+
+		// Selection
+		galleryGrid.addEventListener('click', (e) => {
+			const mediaItem = e.target.closest('.modal-gallery-item');
+			if (!mediaItem) return;
+
+			const filename = mediaItem.dataset.filename;
+			const url = mediaItem.dataset.url;
+
+			if (SINGLE_SELECT_MODE) {
+				// Mode simple : sélection et validation immédiate
+				selectedMedia = [{ filename, url }];
+
+				// Appliquer l'image sélectionnée
+				document.getElementById('image').value = filename;
+				document.getElementById('imagePreview').innerHTML = `
+					<img src="${url}" alt="Aperçu">
+					<button type="button" class="image-remove-btn" onclick="removeSelectedImage()">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="18" y1="6" x2="6" y2="18"></line>
+							<line x1="6" y1="6" x2="18" y2="18"></line>
+						</svg>
+					</button>
+				`;
+
+				// Fermer le modal immédiatement
+				closeModal();
+			} else {
+				// Mode multiple
+				const index = selectedMedia.findIndex(m => m.filename === filename);
+				if (index > -1) {
+					selectedMedia.splice(index, 1);
+					mediaItem.classList.remove('selected');
+				} else {
+					selectedMedia.push({ filename, url });
+					mediaItem.classList.add('selected');
+				}
+				updateValidateButton();
+			}
+		});
+
+		function updateValidateButton() {
+			const count = selectedMedia.length;
+			document.getElementById('selectedCount').textContent = count > 0 ? ` (${count})` : '';
+			validateBtn.disabled = count === 0;
+		}
+
+		// Remove image
+		window.removeSelectedImage = function() {
+			document.getElementById('image').value = '';
+			document.getElementById('imagePreview').innerHTML = `
+				<div class="image-placeholder">
+					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+						<circle cx="8.5" cy="8.5" r="1.5"></circle>
+						<polyline points="21 15 16 10 5 21"></polyline>
+					</svg>
+					<p>Aucune image sélectionnée</p>
+				</div>
+			`;
+		};
+
+		{% if article and article.image %}
+		// Add remove button listener for existing image
+		const existingRemoveBtn = document.getElementById('removeImage');
+		if (existingRemoveBtn) {
+			existingRemoveBtn.addEventListener('click', removeSelectedImage);
+		}
+		{% endif %}
+	</script>
+{% endblock %}

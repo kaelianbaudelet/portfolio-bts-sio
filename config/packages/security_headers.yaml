@@ -1,0 +1,26 @@
+parameters:
+    # Configuration Content Security Policy
+    csp.enabled: true
+
+    # Mode strict CSP (true = avec nonces, false = avec 'unsafe-inline')
+    csp.strict_mode: true
+
+    # Domaines autorisés pour les différentes ressources
+    csp.allowed_domains:
+        scripts:
+            - 'https://maps.googleapis.com'
+            - 'https://maps.gstatic.com'
+        styles:
+            - 'https://fonts.googleapis.com'
+        images:
+            - 'https://maps.googleapis.com'
+            - 'https://maps.gstatic.com'
+            - 'https://*.googleusercontent.com'
+        fonts:
+            - 'https://fonts.gstatic.com'
+        frames:
+            - 'https://www.google.com'
+            - 'https://www.youtube.com'
+        connect:
+            - 'https://maps.googleapis.com'
+            - 'https://cloud.google.com'

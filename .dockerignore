@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.dev
+.env.test
+var/
+vendor/
+public/bundles/
+.git/
+.github/
+docker-compose.override.yml

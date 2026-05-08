@@ -1,0 +1,67 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ experience ? 'Modifier' : 'Nouvelle' }} expérience{% endblock %}
+{% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-page-title">{{ experience ? 'Modifier l\'expérience' : 'Nouvelle expérience' }}</h1>
+        <p class="admin-page-subtitle">{{ experience ? 'Modifiez les informations de l\'expérience' : 'Ajoutez une nouvelle expérience professionnelle' }}</p>
+    </div>
+</div>
+<div class="admin-form-container">
+    <form method="post" class="admin-form">
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="position" class="form-label">Poste *</label>
+                <input type="text" id="position" name="position" class="form-input" required value="{{ experience ? experience.position : '' }}" placeholder="Ex: Développeur Full Stack">
+            </div>
+            <div class="form-group">
+                <label for="company" class="form-label">Entreprise *</label>
+                <input type="text" id="company" name="company" class="form-input" required value="{{ experience ? experience.company : '' }}" placeholder="Ex: Tech Company">
+            </div>
+        </div>
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="startDate" class="form-label">Date de début *</label>
+                <input type="text" id="startDate" name="startDate" class="form-input" required value="{{ experience ? experience.startDate : '' }}" placeholder="Ex: Janv 2023">
+            </div>
+            <div class="form-group">
+                <label for="endDate" class="form-label">Date de fin *</label>
+                <input type="text" id="endDate" name="endDate" class="form-input" required value="{{ experience ? experience.endDate : '' }}" placeholder="Ex: Déc 2023 ou Présent">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-textarea" rows="4">{{ experience ? experience.description : '' }}</textarea>
+            <small class="form-help">Description du poste et des missions</small>
+        </div>
+        <div class="form-group">
+            <label for="responsibilities" class="form-label">Responsabilités</label>
+            <textarea id="responsibilities" name="responsibilities" class="form-textarea" rows="6">{{ experience ? experience.responsibilities|join('\n') : '' }}</textarea>
+            <small class="form-help">Une responsabilité par ligne</small>
+        </div>
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="displayOrder" class="form-label">Ordre d'affichage</label>
+                <input type="number" id="displayOrder" name="displayOrder" class="form-input" value="{{ experience ? experience.displayOrder : 0 }}">
+            </div>
+            <div class="form-group">
+                <label class="admin-checkbox">
+                    <input type="checkbox" name="isVisible" value="1" {{ experience and experience.isVisible ? 'checked' : (not experience ? 'checked' : '') }}>
+                    <span>Visible sur le site public</span>
+                </label>
+            </div>
+        </div>
+        <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                {{ experience ? 'Mettre à jour' : 'Créer l\'expérience' }}
+            </button>
+            <a href="{{ path('admin_experience') }}" class="btn btn-secondary btn-large">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

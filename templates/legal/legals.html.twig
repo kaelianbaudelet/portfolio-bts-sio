@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions Légales{% endblock %}
+
+{% block body %}
+	<main class="main">
+		<section class="page-hero">
+			<div class="container">
+				<h1 class="page-title">Mentions Légales</h1>
+				<p class="page-subtitle">Informations légales et réglementaires</p>
+			</div>
+		</section>
+
+		<section class="contact-page-section">
+			<div class="container">
+				<div class="prose">
+					<p><em>Dernière mise à jour : 03/11/2025</em></p>
+
+					<h2>1. Éditeur du Site</h2>
+					<p>
+						Le site portfolio est édité par
+						<strong>Kaelian Daniel Charles BAUDELET</strong>, personne physique.
+					</p>
+					<ul>
+						<li>
+							<strong>Téléphone :</strong>
+							+33 06 17 86 65 26
+						</li>
+						<li>
+							<strong>Email :</strong>
+							<a href="mailto:contact@kaelian.dev">contact@kaelian.dev</a>
+						</li>
+					</ul>
+
+					<h2>2. Responsable de la Publication</h2>
+					<p>
+						Le responsable de la publication est
+						<strong>Kaelian Daniel Charles BAUDELET</strong>.
+					</p>
+
+					<h2>3. Hébergement</h2>
+					<p>Le site est hébergé par :</p>
+					<div class="info-box">
+						<p>
+							<strong>Vercel Inc.</strong>
+							<br>
+								340 S Lemon Ave #4133
+								<br>
+									Walnut, CA 91789
+									<br>
+										San Francisco, États-Unis
+										<br>
+											<a href="https://vercel.com" target="_blank" rel="noopener noreferrer">https://vercel.com</a>
+										</p>
+									</div>
+
+									<h2>4. Registraires de Domaine</h2>
+									<ul>
+										<li>
+											<strong>OVH SAS</strong>
+											- pour les domaines kaelian.fr et k-baudelet.fr
+										</li>
+										<li>
+											<strong>INFOMANIAK</strong>
+											- pour les domaines kaelian.dev et baudelet.dev
+										</li>
+									</ul>
+
+									<h2>5. Fournisseur DNS</h2>
+									<p>
+										Les services DNS sont fournis par
+										<strong>Cloudflare</strong>, 101 Townsend St, San Francisco, CA 94107, États-Unis.
+									</p>
+
+									<h2>6. Collecte de Données</h2>
+									<p>
+										Des données de mesure d'audience et de préférences utilisateur sont collectées sur ce site. Les données collectées sont anonymes et ne sont jamais vendues à des tiers. Pour plus d'informations, veuillez consulter notre
+										<a href="{{ path('app_privacy') }}">Politique de Confidentialité</a>.
+									</p>
+
+									<h2>7. Propriété Intellectuelle</h2>
+									<p>
+										Le contenu de ce site (textes, images, graphismes, logos, etc.) est protégé par les lois sur les droits d'auteur et la propriété intellectuelle. Tous les droits sont réservés à
+										<strong>Kaelian BAUDELET</strong>, sauf mention contraire.
+									</p>
+									<p>
+										Toute reproduction, distribution, modification ou utilisation du contenu de ce site sans autorisation préalable écrite est strictement interdite.
+									</p>
+									<p>Les contenus tiers mentionnent systématiquement leurs sources et auteurs respectifs.</p>
+
+									<h2>8. Cookies</h2>
+									<p>
+										Ce site utilise des cookies pour améliorer l'expérience utilisateur et analyser le trafic. Pour plus d'informations sur l'utilisation des cookies, veuillez consulter notre
+										<a href="{{ path('app_privacy') }}">Politique de Confidentialité</a>.
+									</p>
+
+									<h2>9. Liens Externes</h2>
+									<p>
+										Ce site peut contenir des liens vers des sites externes. Nous ne sommes pas responsables du contenu, des politiques de confidentialité ou des pratiques de ces sites tiers.
+									</p>
+
+									<h2>10. Contact</h2>
+									<p>Pour toute question concernant ces mentions légales, vous pouvez nous contacter :</p>
+									<ul>
+										<li>
+											Par email :
+											<a href="mailto:contact@kaelian.dev">contact@kaelian.dev</a>
+										</li>
+										<li>Par téléphone : +33 06 17 86 65 26</li>
+										<li>
+											Via le
+											<a href="{{ path('app_contact') }}">formulaire de contact</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</section>
+					</main>
+				{% endblock %}

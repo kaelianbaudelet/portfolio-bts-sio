@@ -1,0 +1,20 @@
+services:
+  php:
+    build:
+      context: .
+      target: frankenphp_base
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: 1
+    volumes:
+      - .:/srv/app
+      - /srv/app/var
+      - /srv/app/vendor
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+
+  database:
+    ports:
+      - "5432:5432"

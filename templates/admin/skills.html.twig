@@ -1,0 +1,99 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Compétences BTS SIO{% endblock %}
+{% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-page-title">Compétences BTS SIO</h1>
+        <p class="admin-page-subtitle">Gérez les compétences du référentiel BTS SIO</p>
+    </div>
+    <a href="{{ path('admin_skill_new') }}" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nouvelle compétence
+    </a>
+</div>
+<div class="admin-section">
+    {% if skills|length == 0 %}
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <h3>Aucune compétence</h3>
+            <p>Commencez par ajouter votre première compétence BTS SIO</p>
+            <a href="{{ path('admin_skill_new') }}" class="btn btn-primary">Ajouter une compétence</a>
+        </div>
+    {% else %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Projets liés</th>
+                    <th>Ordre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for skill in skills %}
+                <tr id="skill-{{ skill.id }}">
+                    <td><span class="admin-badge admin-badge-primary">{{ skill.code }}</span></td>
+                    <td><strong>{{ skill.name }}</strong></td>
+                    <td>{{ skill.description|length > 60 ? skill.description|slice(0, 60) ~ '...' : skill.description }}</td>
+                    <td><span class="admin-badge admin-badge-gray">{{ skill.projects|length }}</span></td>
+                    <td>{{ skill.displayOrder }}</td>
+                    <td>
+                        <div class="admin-table-actions">
+                            <a href="{{ path('admin_skill_edit', {id: skill.id}) }}" class="admin-table-action" title="Modifier">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </a>
+                            <button
+                                type="button"
+                                class="admin-table-action admin-table-action-danger delete-skill-btn"
+                                data-skill-id="{{ skill.id }}"
+                                title="Supprimer">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block javascripts %}
+<script nonce="{{ csp_nonce() }}">
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-skill-btn');
+
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', async function() {
+            const id = this.dataset.skillId;
+            if (!confirm('Voulez-vous vraiment supprimer cette compétence ?')) return;
+            try {
+                const response = await fetch(`/admin/skills/${id}/delete`, {method: 'POST'});
+                if (response.ok) {
+                    const row = document.getElementById(`skill-${id}`);
+                    if (row) row.remove();
+                }
+            } catch (error) {
+                alert('Erreur lors de la suppression.');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

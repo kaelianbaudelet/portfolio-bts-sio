@@ -1,0 +1,242 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Certifications
+{% endblock %}
+
+{% block body %}
+	<main class="main certifications-main">
+		<section class="page-hero">
+			<div class="container">
+				<h1 class="page-title fade-up">Mes Certifications et Attestations</h1>
+				<p class="page-subtitle fade-up delay-200">Certifications et attestations professionnelles obtenues</p>
+			</div>
+		</section>
+
+		<!-- Filters Section -->
+		<section class="filters-section">
+			<div class="container">
+				<div class="filters-wrapper fade-up delay-200">
+					<div class="filter-group">
+						<label for="typeFilter" class="filter-label">
+							<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M19 3H5C3.58579 3 2.87868 3 2.43934 3.4122C2 3.8244 2 4.48782 2 5.81466V6.50448C2 7.54232 2 8.06124 2.2596 8.49142C2.5192 8.9216 2.99347 9.18858 3.94202 9.72255L6.85504 11.3624C7.49146 11.7206 7.80967 11.8998 8.03751 12.0976C8.51199 12.5095 8.80408 12.9935 8.93644 13.5872C9 13.8722 9 14.2058 9 14.8729L9 17.5424C9 18.452 9 18.9067 9.25192 19.2613C9.50385 19.6158 9.95128 19.7907 10.8462 20.1406C12.7248 20.875 13.6641 21.2422 14.3321 20.8244C15 20.4066 15 19.4519 15 17.5424V14.8729C15 14.2058 15 13.8722 15.0636 13.5872C15.1959 12.9935 15.488 12.5095 15.9625 12.0976C16.1903 11.8998 16.5085 11.7206 17.145 11.3624L20.058 9.72255C21.0065 9.18858 21.4808 8.9216 21.7404 8.49142C22 8.06124 22 7.54232 22 6.50448V5.81466C22 4.48782 22 3.8244 21.5607 3.4122C21.1213 3 20.4142 3 19 3Z" fill="currentColor"/>
+							</svg>
+							Type
+						</label>
+						<select id="typeFilter" class="filter-select">
+							<option value="all">Tous</option>
+							<option value="certification">Certifications</option>
+							<option value="attestation">Attestations</option>
+						</select>
+					</div>
+
+					<div class="filter-group">
+						<label for="issuerFilter" class="filter-label">
+							<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M13.436 5.78311C12.5407 5.29495 11.4588 5.29495 10.5636 5.78311L5.76937 8.39728C4.80539 8.92292 4.20557 9.93319 4.20557 11.0312V15.9688C4.20557 17.0668 4.80539 18.0771 5.76937 18.6027L10.5636 21.2169C11.4588 21.705 12.5407 21.705 13.436 21.2169L18.2302 18.6027C19.1942 18.0771 19.794 17.0668 19.794 15.9688V11.0312C19.794 9.93319 19.1942 8.92292 18.2302 8.39728L13.436 5.78311ZM12 10.5C11.7159 10.5 11.5259 10.8408 11.1459 11.5225L11.0476 11.6989C10.9397 11.8926 10.8857 11.9894 10.8015 12.0533C10.7173 12.1172 10.6125 12.141 10.4028 12.1884L10.2119 12.2316C9.47396 12.3986 9.10501 12.482 9.01723 12.7643C8.92945 13.0466 9.18097 13.3407 9.68403 13.929L9.81418 14.0812C9.95713 14.2483 10.0286 14.3319 10.0608 14.4353C10.0929 14.5387 10.0821 14.6502 10.0605 14.8733L10.0408 15.0763C9.96476 15.8612 9.92674 16.2536 10.1565 16.4281C10.3864 16.6025 10.7318 16.4435 11.4227 16.1254L11.6014 16.0431C11.7978 15.9527 11.8959 15.9075 12 15.9075C12.1041 15.9075 12.2022 15.9527 12.3986 16.0431L12.5773 16.1254C13.2682 16.4435 13.6136 16.6025 13.8435 16.4281C14.0733 16.2536 14.0352 15.8612 13.9592 15.0763L13.9395 14.8733C13.9179 14.6502 13.9071 14.5387 13.9392 14.4353C13.9714 14.3319 14.0429 14.2483 14.1858 14.0812L14.316 13.929C14.819 13.3407 15.0706 13.0466 14.9828 12.7643C14.895 12.482 14.526 12.3986 13.7881 12.2316L13.5972 12.1884C13.3875 12.141 13.2827 12.1172 13.1985 12.0533C13.1143 11.9894 13.0603 11.8926 12.9524 11.6989L12.8541 11.5225C12.4741 10.8408 12.2841 10.5 12 10.5Z" fill="currentColor"/>
+								<path d="M11 2H13C14.8856 2 15.8284 2 16.4142 2.58579C17 3.17157 17 4.11438 17 6V6.01797L14.1541 4.46616C12.8112 3.73394 11.1884 3.73393 9.84551 4.46616L7 6.01775V6C7 4.11438 7 3.17157 7.58579 2.58579C8.17157 2 9.11438 2 11 2Z" fill="currentColor"/>
+							</svg>
+							Émetteur
+						</label>
+						<select id="issuerFilter" class="filter-select">
+							<option value="all">Tous</option>
+						</select>
+					</div>
+
+					<div class="filter-group">
+						<label for="yearFilter" class="filter-label">
+							<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M22 14V12C22 11.161 22 10.4153 21.9871 9.75H2.0129C2 10.4153 2 11.161 2 12V14C2 17.7712 2 19.6569 3.17157 20.8284C4.34315 22 6.22876 22 10 22H14C17.7712 22 19.6569 22 20.8284 20.8284C22 19.6569 22 17.7712 22 14Z" fill="currentColor"/>
+								<path d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z" fill="currentColor"/>
+							</svg>
+
+							Année
+						</label>
+						<select id="yearFilter" class="filter-select">
+							<option value="all">Toutes</option>
+						</select>
+					</div>
+
+					<button id="resetFilters" class="btn btn-primary btn-large btn-block" style="display: none;">
+						<svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M1 4v6h6"/>
+							<path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+						</svg>
+						Réinitialiser
+					</button>
+				</div>
+
+				<div class="results-count fade-up delay-200">
+					<span id="resultsCount">0</span>
+					résultat(s)
+				</div>
+			</div>
+		</section>
+
+		<!-- Certifications Grid -->
+		<section class="certifications-section">
+			<div class="container">
+				{% if certifications|length == 0 %}
+					<div class="no-results" style="display: block;">
+						<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+							<path d="M6 12v5c3 3 9 3 12 0v-5"/>
+						</svg>
+						<p>Aucune certification disponible pour le moment</p>
+					</div>
+				{% else %}
+					<div id="noResults" class="no-results" style="display: none;">
+						<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+							<line x1="8" y1="11" x2="14" y2="11"/>
+						</svg>
+						<p>Aucune certification ne correspond à vos critères</p>
+					</div>
+					<div class="certifications-grid" id="certificationsGrid">
+						{% for certification in certifications %}
+							<article class="diploma-card fade-up delay-{{ 600 + (loop.index0 * 100) }}" data-type="{{ certification.type }}" data-issuer="{{ certification.issuerSlug }}" data-year="{{ certification.obtainedYear }}" data-pdf="{{ certification.pdfUrl|default('') }}">
+								<div class="diploma-frame">
+									<div class="diploma-header">
+										<div class="issuer-logo {{ certification.issuerSlug }}">
+											<img src="/assets/images/issuers/{{ certification.issuerSlug }}.svg" alt="{{ certification.issuer }}" onerror="this.parentElement.innerHTML='<span>{{ certification.issuerSlug|slice(0, 3)|upper }}</span>'">
+										</div>
+										<span class="cert-type-badge {% if certification.type == 'attestation' %}attestation{% endif %}">
+											<svg width="18px" height="18px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<path fill-rule="evenodd" clip-rule="evenodd" d="M2 12V8C2 5.17157 2 3.75736 2.87868 2.87868C3.75736 2 5.17157 2 8 2H16C18.8284 2 20.2426 2 21.1213 2.87868C22 3.75736 22 5.17157 22 8V12C22 14.8284 22 16.2426 21.1213 17.1213C20.645 17.5977 20.0113 17.8158 19.0802 17.9156C19.0062 17.8157 18.9362 17.737 18.8862 17.6821C18.7701 17.5544 18.6228 17.4092 18.48 17.2684L16.987 15.7962L16.4357 15.2377C16.0733 13.1151 14.2255 11.5 12.0001 11.5C9.77461 11.5 7.9268 13.1151 7.56446 15.2377L7.01311 15.7962L5.5202 17.2683C5.37739 17.4091 5.23008 17.5543 5.11392 17.6821C5.06395 17.737 4.9939 17.8157 4.9199 17.9156C3.98877 17.8158 3.35503 17.5977 2.87868 17.1213C2 16.2426 2 14.8284 2 12ZM9 5.25C8.58579 5.25 8.25 5.58579 8.25 6C8.25 6.41421 8.58579 6.75 9 6.75H15C15.4142 6.75 15.75 6.41421 15.75 6C15.75 5.58579 15.4142 5.25 15 5.25H9ZM6.25 9.5C6.25 9.08579 6.58579 8.75 7 8.75H17C17.4142 8.75 17.75 9.08579 17.75 9.5C17.75 9.91421 17.4142 10.25 17 10.25H7C6.58579 10.25 6.25 9.91421 6.25 9.5Z" fill="currentColor"/>
+												<path d="M15 16C15 17.6569 13.6569 19 12 19C10.3431 19 9 17.6569 9 16C9 14.3431 10.3431 13 12 13C13.6569 13 15 14.3431 15 16Z" fill="currentColor"/>
+												<path d="M9.00111 15.9174C9.00037 15.9449 9 15.9724 9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 15.9724 14.9996 15.9449 14.9989 15.9174C14.9551 14.2987 13.6292 13 12 13C10.4467 13 9.16912 14.1805 9.01549 15.6933C9.00798 15.7672 9.00315 15.842 9.00111 15.9174Z" fill="currentColor"/>
+												<path d="M7.6757 17.2494L6.59523 18.3148C6.27116 18.6344 6.10913 18.7942 6.05306 18.9295C5.92529 19.2378 6.03463 19.5799 6.31283 19.7421C6.43492 19.8132 6.65512 19.8354 7.09553 19.8798C7.3442 19.9048 7.46853 19.9173 7.57266 19.9554C7.80579 20.0405 7.98715 20.2193 8.07345 20.4492C8.112 20.5519 8.1247 20.6745 8.1501 20.9197C8.19509 21.354 8.21758 21.5711 8.28977 21.6915C8.45425 21.9659 8.80111 22.0737 9.1138 21.9477C9.25102 21.8924 9.41306 21.7326 9.73713 21.413L10.8175 20.343C9.30505 19.9322 8.10917 18.7524 7.6757 17.2494Z" fill="currentColor"/>
+												<path d="M13.1825 20.343L14.2629 21.413C14.5869 21.7326 14.749 21.8924 14.8862 21.9477C15.1989 22.0737 15.5457 21.9659 15.7102 21.6915C15.7824 21.5711 15.8049 21.354 15.8499 20.9197C15.8753 20.6745 15.888 20.5519 15.9265 20.4492C16.0129 20.2193 16.1942 20.0405 16.4273 19.9554C16.5315 19.9173 16.6558 19.9048 16.9045 19.8798C17.3449 19.8354 17.5651 19.8132 17.6872 19.7421C17.9654 19.5799 18.0747 19.2378 17.9469 18.9295C17.8909 18.7942 17.7288 18.6344 17.4048 18.3148L16.3243 17.2494C15.8908 18.7524 14.6949 19.9322 13.1825 20.343Z" fill="currentColor"/>
+											</svg>
+											{{ certification.typeLabel }}
+										</span>
+									</div>
+
+									<div class="diploma-content">
+										<h3 class="diploma-title">{{ certification.name }}</h3>
+										{% if certification.subtitle %}
+											<div class="diploma-subtitle">{{ certification.subtitle }}</div>
+										{% endif %}
+
+										<div class="diploma-meta">
+											<div class="meta-item">
+
+												<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path fill-rule="evenodd" clip-rule="evenodd" d="M13.436 5.78311C12.5407 5.29495 11.4588 5.29495 10.5636 5.78311L5.76937 8.39728C4.80539 8.92292 4.20557 9.93319 4.20557 11.0312V15.9688C4.20557 17.0668 4.80539 18.0771 5.76937 18.6027L10.5636 21.2169C11.4588 21.705 12.5407 21.705 13.436 21.2169L18.2302 18.6027C19.1942 18.0771 19.794 17.0668 19.794 15.9688V11.0312C19.794 9.93319 19.1942 8.92292 18.2302 8.39728L13.436 5.78311ZM12 10.5C11.7159 10.5 11.5259 10.8408 11.1459 11.5225L11.0476 11.6989C10.9397 11.8926 10.8857 11.9894 10.8015 12.0533C10.7173 12.1172 10.6125 12.141 10.4028 12.1884L10.2119 12.2316C9.47396 12.3986 9.10501 12.482 9.01723 12.7643C8.92945 13.0466 9.18097 13.3407 9.68403 13.929L9.81418 14.0812C9.95713 14.2483 10.0286 14.3319 10.0608 14.4353C10.0929 14.5387 10.0821 14.6502 10.0605 14.8733L10.0408 15.0763C9.96476 15.8612 9.92674 16.2536 10.1565 16.4281C10.3864 16.6025 10.7318 16.4435 11.4227 16.1254L11.6014 16.0431C11.7978 15.9527 11.8959 15.9075 12 15.9075C12.1041 15.9075 12.2022 15.9527 12.3986 16.0431L12.5773 16.1254C13.2682 16.4435 13.6136 16.6025 13.8435 16.4281C14.0733 16.2536 14.0352 15.8612 13.9592 15.0763L13.9395 14.8733C13.9179 14.6502 13.9071 14.5387 13.9392 14.4353C13.9714 14.3319 14.0429 14.2483 14.1858 14.0812L14.316 13.929C14.819 13.3407 15.0706 13.0466 14.9828 12.7643C14.895 12.482 14.526 12.3986 13.7881 12.2316L13.5972 12.1884C13.3875 12.141 13.2827 12.1172 13.1985 12.0533C13.1143 11.9894 13.0603 11.8926 12.9524 11.6989L12.8541 11.5225C12.4741 10.8408 12.2841 10.5 12 10.5Z" fill="currentColor"/>
+													<path d="M11 2H13C14.8856 2 15.8284 2 16.4142 2.58579C17 3.17157 17 4.11438 17 6V6.01797L14.1541 4.46616C12.8112 3.73394 11.1884 3.73393 9.84551 4.46616L7 6.01775V6C7 4.11438 7 3.17157 7.58579 2.58579C8.17157 2 9.11438 2 11 2Z" fill="currentColor"/>
+												</svg>
+												<span>{{ certification.issuer }}</span>
+											</div>
+											<div class="meta-item">
+
+
+												<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M22 14V12C22 11.161 22 10.4153 21.9871 9.75H2.0129C2 10.4153 2 11.161 2 12V14C2 17.7712 2 19.6569 3.17157 20.8284C4.34315 22 6.22876 22 10 22H14C17.7712 22 19.6569 22 20.8284 20.8284C22 19.6569 22 17.7712 22 14Z" fill="currentColor"/>
+													<path d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z" fill="currentColor"/>
+												</svg>
+
+
+												<span>{{ certification.obtainedAtFormatted }}</span>
+											</div>
+										</div>
+
+										{% if certification.description %}
+											<p class="diploma-description">
+												{{ certification.description }}
+											</p>
+										{% endif %}
+									</div>
+
+									<div class="diploma-footer">
+										{% if certification.pdfFile %}
+											<button class="btn-diploma btn-view" data-pdf="{{ certification.pdfUrl }}">
+												<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z" fill="currentColor"/>
+													<path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 13.6394 2.42496 14.1915 3.27489 15.2957C4.97196 17.5004 7.81811 20 12 20C16.1819 20 19.028 17.5004 20.7251 15.2957C21.575 14.1915 22 13.6394 22 12C22 10.3606 21.575 9.80853 20.7251 8.70433C19.028 6.49956 16.1819 4 12 4C7.81811 4 4.97196 6.49956 3.27489 8.70433C2.42496 9.80853 2 10.3606 2 12ZM12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25Z" fill="currentColor"/>
+												</svg>
+												Voir
+											</button>
+											<a href="{{ certification.pdfUrl }}" class="btn-diploma btn-download" download>
+												<svg width="20px" height="20px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M19.3517 7.61665L15.3929 4.05375C14.2651 3.03868 13.7012 2.53114 13.0092 2.26562L13 5.00011C13 7.35713 13 8.53564 13.7322 9.26787C14.4645 10.0001 15.643 10.0001 18 10.0001H21.5801C21.2175 9.29588 20.5684 8.71164 19.3517 7.61665Z" fill="currentColor"/>
+													<path fill-rule="evenodd" clip-rule="evenodd" d="M10 22H14C17.7712 22 19.6569 22 20.8284 20.8284C22 19.6569 22 17.7712 22 14V13.5629C22 12.6901 22 12.0344 21.9574 11.5001H18L17.9051 11.5001C16.808 11.5002 15.8385 11.5003 15.0569 11.3952C14.2098 11.2813 13.3628 11.0198 12.6716 10.3285C11.9803 9.63726 11.7188 8.79028 11.6049 7.94316C11.4998 7.16164 11.4999 6.19207 11.5 5.09497L11.5092 2.26057C11.5095 2.17813 11.5166 2.09659 11.53 2.01666C11.1214 2 10.6358 2 10.0298 2C6.23869 2 4.34315 2 3.17157 3.17157C2 4.34315 2 6.22876 2 10V14C2 17.7712 2 19.6569 3.17157 20.8284C4.34315 22 6.22876 22 10 22ZM7.98704 19.0472C8.27554 19.3176 8.72446 19.3176 9.01296 19.0472L11.013 17.1722C11.3151 16.8889 11.3305 16.4142 11.0472 16.112C10.7639 15.8099 10.2892 15.7945 9.98704 16.0778L9.25 16.7688L9.25 13.5C9.25 13.0858 8.91421 12.75 8.5 12.75C8.08579 12.75 7.75 13.0858 7.75 13.5V16.7688L7.01296 16.0778C6.71077 15.7945 6.23615 15.8099 5.95285 16.112C5.66955 16.4142 5.68486 16.8889 5.98704 17.1722L7.98704 19.0472Z" fill="currentColor"/>
+												</svg>
+												Télécharger
+											</a>
+										{% else %}
+											<span style="font-size: 0.875rem; color: #6b5e4a;">PDF non disponible</span>
+										{% endif %}
+									</div>
+								</div>
+							</article>
+						{% endfor %}
+					</div>
+				{% endif %}
+
+
+			</div>
+		</section>
+
+		<!-- PDF Preview Modal -->
+		<div class="pdf-modal" id="pdfModal">
+			<div class="pdf-modal-overlay"></div>
+			<div class="pdf-modal-content">
+				<div class="pdf-modal-header">
+					<h3 id="pdfModalTitle">Aperçu de la certification</h3>
+					<div class="pdf-controls">
+						<button id="pdfPrevPage" class="pdf-control-btn" title="Page précédente">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="15 18 9 12 15 6"/>
+							</svg>
+						</button>
+						<span id="pdfPageInfo" class="pdf-page-info">1 / 1</span>
+						<button id="pdfNextPage" class="pdf-control-btn" title="Page suivante">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="9 18 15 12 9 6"/>
+							</svg>
+						</button>
+						<button id="pdfZoomOut" class="pdf-control-btn" title="Zoom arrière">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="11" cy="11" r="8"/>
+								<line x1="8" y1="11" x2="14" y2="11"/>
+								<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+							</svg>
+						</button>
+						<button id="pdfZoomIn" class="pdf-control-btn" title="Zoom avant">
+							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="11" cy="11" r="8"/>
+								<line x1="11" y1="8" x2="11" y2="14"/>
+								<line x1="8" y1="11" x2="14" y2="11"/>
+								<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+							</svg>
+						</button>
+					</div>
+					<button class="pdf-modal-close" id="closePdfModal">
+						<svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="18" y1="6" x2="6" y2="18"/>
+							<line x1="6" y1="6" x2="18" y2="18"/>
+						</svg>
+					</button>
+				</div>
+				<div class="pdf-modal-body">
+					<div id="pdfLoader" class="pdf-loader">
+						<div class="loader-spinner"></div>
+						<p>Chargement du PDF...</p>
+					</div>
+					<canvas id="pdfCanvas"></canvas>
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}
+
+{% block javascripts %}
+	<script src="/assets/scripts/pdf.js"></script>
+	<script nonce="{{ csp_nonce() }}">
+		if (typeof pdfjsLib !== 'undefined') {
+			pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/scripts/pdf.worker.min.js';
+		}
+	</script>
+	<script src="/assets/scripts/certifications.js"></script>
+{% endblock %}

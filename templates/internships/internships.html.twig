@@ -1,0 +1,239 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Stages et Alternances
+{% endblock %}
+
+{% block body %}
+<main class="main">
+	<section class="page-hero">
+		<div class="container">
+			<h1 class="page-title fade-up">Mes Stages</h1>
+			<p class="page-subtitle fade-up delay-200">Expériences professionnelles et stages réalisés</p>
+		</div>
+	</section>
+
+	<section class="internships-section">
+		<div class="container">
+			{% if internshipsByYear|length > 0 %}
+				{% for year, internships in internshipsByYear %}
+					<div class="internships-year-section fade-up delay-300">
+						<h2 class="year-title">{{ year }}</h2>
+						<div class="internships-grid">
+							{% for internship in internships %}
+								{% set delay = 400 + loop.index0 * 100 %}
+								<div class="internship-card fade-up delay-{{ delay }}" data-internship-id="{{ internship.id }}">
+									<div class="internship-card-header">
+										{% if internship.companyLogo %}
+											<img src="{{ asset('uploads/' ~ internship.companyLogo) }}" alt="{{ internship.company }}" class="company-logo">
+										{% else %}
+											<div class="company-logo-placeholder">
+												<i class="fas fa-building"></i>
+											</div>
+										{% endif %}
+										<div class="internship-header-info">
+											<h3 class="internship-title">{{ internship.title }}</h3>
+											<p class="internship-company">{{ internship.company }}</p>
+										</div>
+									</div>
+									<div class="internship-card-body">
+										{% if internship.shortDescription %}
+											<p class="internship-description">{{ internship.shortDescription }}</p>
+										{% endif %}
+										{% if internship.projects|length > 0 %}
+											<p class="internship-projects-count">
+												{{ internship.projects|length }}
+												projet{{ internship.projects|length > 1 ? 's' : '' }}
+												réalisé{{ internship.projects|length > 1 ? 's' : '' }}
+											</p>
+										{% endif %}
+									</div>
+									<div class="internship-card-footer">
+										<button class="btn btn-primary btn-view-more" data-internship-id="{{ internship.id }}">
+											Voir les détails
+											<i class="fas fa-arrow-right"></i>
+										</button>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				<div class="empty-state fade-up delay-400">
+					<div class="empty-state-icon">
+						<i class="fas fa-briefcase"></i>
+					</div>
+					<h3>Aucun stage pour le moment</h3>
+					<p>Les expériences professionnelles seront bientôt disponibles.</p>
+				</div>
+			{% endif %}
+		</div>
+	</section>
+</main>
+
+<!-- Modal for internship details -->
+<div class="image-selector-modal" id="internshipModal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-header fade-up delay-350">
+			<div class="modal-header-content">
+				<div id="modalCompanyLogo"></div>
+				<div>
+					<h2 class="modal-title" id="modalInternshipTitle"></h2>
+					<p class="modal-company" id="modalInternshipCompany"></p>
+				</div>
+			</div>
+			<button class="modal-close" id="modalClose">
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+		<div class="modal-body fade-up delay-400">
+			<div class="modal-section">
+				<h3 class="fade-up delay-450">Période du stage</h3>
+				<p id="modalInternshipPeriod"></p>
+			</div>
+
+			<div class="modal-section" id="modalDescriptionSection">
+				<h3 class="fade-up delay-450">Description du stage</h3>
+				<p id="modalInternshipDescription"></p>
+			</div>
+
+			<div class="modal-section" id="modalTasksSection" style="display: none;">
+				<h3>Missions réalisées</h3>
+				<ul class="tasks-list" id="modalInternshipTasks"></ul>
+			</div>
+
+			<div class="modal-section" id="modalProjectsSection" style="display: none;">
+				<h3 class="fade-up delay-550">Projets réalisés durant ce stage</h3>
+				<div class="modal-projects-list" id="modalProjectsList">
+					<div class="loading">Chargement...</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script nonce="{{ csp_nonce() }}">
+	document.addEventListener('DOMContentLoaded', function() {
+																										const internshipCards = document.querySelectorAll('.internship-card, .btn-view-more');
+																										const modal = document.getElementById('internshipModal');
+																										const modalClose = document.getElementById('modalClose');
+																										const modalTitle = document.getElementById('modalInternshipTitle');
+																										const modalCompany = document.getElementById('modalInternshipCompany');
+																										const modalCompanyLogo = document.getElementById('modalCompanyLogo');
+																										const modalPeriod = document.getElementById('modalInternshipPeriod');
+																										const modalDescription = document.getElementById('modalInternshipDescription');
+																										const modalDescriptionSection = document.getElementById('modalDescriptionSection');
+																										const modalTasksSection = document.getElementById('modalTasksSection');
+																										const modalTasks = document.getElementById('modalInternshipTasks');
+																										const modalProjectsSection = document.getElementById('modalProjectsSection');
+																										const modalProjectsList = document.getElementById('modalProjectsList');
+
+																										internshipCards.forEach(card => {
+																											card.addEventListener('click', async function(e) {
+																												e.stopPropagation();
+
+																												const internshipId = this.dataset.internshipId || this.closest('.internship-card').dataset.internshipId;
+
+																												modal.classList.add('active');
+																												modalProjectsList.innerHTML = '<div class="loading">Chargement...</div>';
+
+																												try {
+																													const response = await fetch(`/api/internships/${internshipId}`);
+																													const internship = await response.json();
+
+																													modalTitle.textContent = internship.title;
+																													modalCompany.textContent = internship.company;
+																													const startDate = new Date(internship.startDate);
+																													const endDate = internship.endDate ? new Date(internship.endDate) : null;
+																													const options = { year: 'numeric', month: 'long' };
+																													const fr = 'fr-FR';
+
+																													function formatDateFr(d) {
+																														if (!d) return '';
+																														// Format fr-FR date (ex: janvier 2023)
+																														return d.toLocaleDateString(fr, options);
+																													}
+
+																													// Sinon, fallback :
+																													if (endDate) {
+																														modalPeriod.innerHTML = `${formatDateFr(startDate)} à ${formatDateFr(endDate)}`;
+																													} else {
+																														modalPeriod.innerHTML = `${formatDateFr(startDate)}`;
+																													}
+
+																													// Company logo
+																													if (internship.companyLogo) {
+																														modalCompanyLogo.innerHTML = `<img src="${internship.companyLogo}" alt="${internship.company}">`;
+																													} else {
+																														modalCompanyLogo.innerHTML = '';
+																													}
+
+																													// Description
+																													if (internship.fullDescription) {
+																														modalDescription.textContent = internship.fullDescription;
+																														modalDescriptionSection.style.display = 'block';
+																													} else if (internship.shortDescription) {
+																														modalDescription.textContent = internship.shortDescription;
+																														modalDescriptionSection.style.display = 'block';
+																													} else {
+																														modalDescriptionSection.style.display = 'none';
+																													}
+
+																													// Tasks
+																													if (internship.tasks && internship.tasks.length > 0) {
+																														modalTasks.innerHTML = internship.tasks.map(task => `<li>${task}</li>`).join('');
+																														modalTasksSection.style.display = 'block';
+																													} else {
+																														modalTasksSection.style.display = 'none';
+																													}
+
+																													// Projects
+																													if (internship.projects && internship.projects.length > 0) {
+																														modalProjectsList.innerHTML = internship.projects.map((project, idx) => `
+																															<a href="/projects?project=${project.id}&from=internship&internshipId=${internshipId}" class="modal-project-card fade-up delay-${100 + idx * 50}">
+																																${project.image ? `<img src="/uploads/${project.image}" alt="${project.title}" class="modal-project-image">` : '<div class="modal-project-image"></div>'}
+																																<div class="modal-project-info">
+																																	<h4>${project.title}</h4>
+																																	<p>${project.shortDescription}</p>
+																																</div>
+																															</a>
+																														`).join('');
+																														modalProjectsSection.style.display = 'block';
+																													} else {
+																														modalProjectsSection.style.display = 'none';
+																													}
+																												} catch (error) {
+																													console.error('Erreur lors du chargement du stage:', error);
+																													modalProjectsList.innerHTML = '<p>Erreur lors du chargement des détails.</p>';
+																												}
+																											});
+																										});
+
+																										modalClose.addEventListener('click', () => modal.classList.remove('active'));
+
+																										modal.addEventListener('click', (e) => {
+																											if (e.target === modal) {
+																												modal.classList.remove('active');
+																											}
+																										});
+
+																										// Auto-ouvrir le modal si internshipId est dans l'URL
+																										const urlParams = new URLSearchParams(window.location.search);
+																										const internshipIdFromUrl = urlParams.get('internshipId');
+
+																										if (internshipIdFromUrl) {
+																											// Trouver la card correspondante et simuler un clic
+																											setTimeout(() => {
+																												const targetCard = document.querySelector(`.internship-card[data-internship-id="${internshipIdFromUrl}"]`);
+																												if (targetCard) {
+																													targetCard.click();
+																												}
+
+																												// Nettoyer l'URL sans recharger la page
+																												const newUrl = window.location.pathname;
+																												window.history.replaceState({}, document.title, newUrl);
+																											}, 100);
+																										}
+																									});
+																									</script>
+																									{% endblock %}

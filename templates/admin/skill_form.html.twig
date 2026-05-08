@@ -1,0 +1,58 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ skill ? 'Modifier' : 'Nouvelle' }} compétence{% endblock %}
+{% block body %}
+<div class="admin-header">
+    <div>
+        <h1 class="admin-page-title">{{ skill ? 'Modifier la compétence' : 'Nouvelle compétence' }}</h1>
+        <p class="admin-page-subtitle">{{ skill ? 'Modifiez les informations de la compétence BTS SIO' : 'Ajoutez une nouvelle compétence du référentiel BTS SIO' }}</p>
+    </div>
+</div>
+<div class="admin-form-container">
+    <form method="post" class="admin-form">
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="code" class="form-label">Code de la compétence *</label>
+                <input type="text" id="code" name="code" class="form-input" required value="{{ skill ? skill.code : '' }}" placeholder="Ex: B1.1">
+                <small class="form-help">Code du référentiel BTS SIO (ex: B1.1, B1.2, B2.1, etc.)</small>
+            </div>
+            <div class="form-group">
+                <label for="name" class="form-label">Nom de la compétence *</label>
+                <input type="text" id="name" name="name" class="form-input" required value="{{ skill ? skill.name : '' }}" placeholder="Ex: Support et mise à disposition de services informatiques">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-textarea" rows="4" placeholder="Description détaillée de la compétence...">{{ skill ? skill.description : '' }}</textarea>
+            <small class="form-help">Description détaillée de la compétence du référentiel</small>
+        </div>
+        <div class="admin-form-grid">
+            <div class="form-group">
+                <label for="icon" class="form-label">Icône</label>
+                <input type="text" id="icon" name="icon" class="form-input" value="{{ skill ? skill.icon : '' }}" placeholder="Ex: fas fa-code">
+                <small class="form-help">Optionnel - Classe CSS de l'icône (Font Awesome)</small>
+            </div>
+            <div class="form-group">
+                <label for="displayOrder" class="form-label">Ordre d'affichage</label>
+                <input type="number" id="displayOrder" name="displayOrder" class="form-input" value="{{ skill ? skill.displayOrder : 0 }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="admin-checkbox">
+                <input type="checkbox" name="isVisible" value="1" {{ skill and skill.isVisible ? 'checked' : (not skill ? 'checked' : '') }}>
+                <span>Visible sur le site public</span>
+            </label>
+        </div>
+        <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                {{ skill ? 'Mettre à jour' : 'Créer la compétence' }}
+            </button>
+            <a href="{{ path('admin_skills') }}" class="btn btn-secondary btn-large">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

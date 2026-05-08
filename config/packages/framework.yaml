@@ -1,0 +1,19 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+
+    session:
+        name: __session        # Renommer le cookie
+        cookie_lifetime: 0     # expire à la fermeture du navigateur
+        cookie_httponly: true  # empêche JS d’accéder au cookie
+        cookie_secure: true    # On force à true pour Cloudflare
+        cookie_samesite: lax   # Lax ou Strict selon ton besoin
+        use_cookies: true      # n’autorise pas le SID dans l’URL
+        sid_length: 48         # plus longue session id
+        sid_bits_per_character: 6
+    trusted_hosts: '%env(TRUSTED_HOSTS)%'
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

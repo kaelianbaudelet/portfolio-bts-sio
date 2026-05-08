@@ -1,0 +1,125 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Projets
+{% endblock %}
+
+{% block body %}
+	<div class="admin-header">
+		<div>
+			<h1 class="admin-page-title">Projets</h1>
+			<p class="admin-page-subtitle">Gérez les projets de votre portfolio</p>
+		</div>
+		<a href="{{ path('admin_project_new') }}" class="btn btn-primary">
+			<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="12" y1="5" x2="12" y2="19"></line>
+				<line x1="5" y1="12" x2="19" y2="12"></line>
+			</svg>
+			Nouveau projet
+		</a>
+	</div>
+
+	<div class="admin-section">
+		{% if projects|length == 0 %}
+			<div class="admin-empty-state">
+				<svg width="64" height="64" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+				</svg>
+				<h3>Aucun projet</h3>
+				<p>Commencez par ajouter votre premier projet</p>
+				<a href="{{ path('admin_project_new') }}" class="btn btn-primary">Ajouter un projet</a>
+			</div>
+		{% else %}
+			<div class="admin-grid">
+				{% for project in projects %}
+					<div class="admin-project-card" id="project-{{ project.id }}">
+						<div class="admin-project-card-header">
+							{% if project.image %}
+								<img src="{{ asset('uploads/' ~ project.image) }}" alt="{{ project.title }}" class="admin-project-image">
+							{% else %}
+								<div class="admin-project-placeholder">
+									<svg width="48" height="48" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+										<circle cx="8.5" cy="8.5" r="1.5"></circle>
+										<polyline points="21 15 16 10 5 21"></polyline>
+									</svg>
+								</div>
+							{% endif %}
+						</div>
+						<div class="admin-project-card-body">
+							<div class="admin-project-card-title">
+								<h3>{{ project.title }}</h3>
+								{% if not project.isVisible %}
+									<span class="admin-badge admin-badge-gray">Masqué</span>
+								{% endif %}
+							</div>
+							<p class="admin-project-card-description">
+								{{ project.shortDescription|length > 100 ? project.shortDescription|slice(0, 100) ~ '...' : project.shortDescription }}
+							</p>
+							<div class="admin-project-card-technologies">
+								{% for tech in project.technologies %}
+									<span class="admin-tech-tag">{{ tech }}</span>
+								{% endfor %}
+							</div>
+						</div>
+						<div class="admin-project-card-footer">
+							<a href="{{ path('admin_project_edit', {id: project.id}) }}" class="admin-icon-btn" title="Modifier">
+								<svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+									<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+								</svg>
+							</a>
+							<button data-project-id="{{ project.id }}" class="admin-icon-btn admin-icon-btn-danger delete-project-btn" title="Supprimer">
+								<svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<polyline points="3 6 5 6 21 6"></polyline>
+									<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+								</svg>
+							</button>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+	</div>
+
+{% endblock %}
+
+{% block javascripts %}
+	<script nonce="{{ csp_nonce() }}">
+		document.addEventListener('DOMContentLoaded', function() {
+			const deleteButtons = document.querySelectorAll('.delete-project-btn');
+
+			deleteButtons.forEach(button => {
+				button.addEventListener('click', async function() {
+					const id = this.getAttribute('data-project-id');
+
+					if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+						return;
+					}
+
+					try {
+						const response = await fetch(`/admin/projects/${id}/delete`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						});
+
+						if (response.ok) {
+							const card = document.getElementById(`project-${id}`);
+							if (card) {
+								card.style.opacity = '0';
+								card.style.transform = 'scale(0.9)';
+								setTimeout(() => card.remove(), 300);
+							}
+						} else {
+							alert('Une erreur est survenue lors de la suppression du projet.');
+						}
+					} catch (error) {
+						console.error('Error deleting project:', error);
+						alert('Une erreur est survenue lors de la suppression du projet.');
+					}
+				});
+			});
+		});
+	</script>
+{% endblock %}

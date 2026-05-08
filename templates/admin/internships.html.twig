@@ -1,0 +1,114 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Stages{% endblock %}
+{% block body %}
+	<div class="admin-header">
+		<div>
+			<h1 class="admin-page-title">Stages et Alternances</h1>
+			<p class="admin-page-subtitle">Gérez vos expériences de stage</p>
+		</div>
+		<a href="{{ path('admin_internship_new') }}" class="btn btn-primary">
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="12" y1="5" x2="12" y2="19"></line>
+				<line x1="5" y1="12" x2="19" y2="12"></line>
+			</svg>
+			Nouveau stage
+		</a>
+	</div>
+	<div class="admin-section">
+		{% if internships|length == 0 %}
+			<div class="admin-empty-state">
+				<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+					<path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+				</svg>
+				<h3>Aucun stage</h3>
+				<p>Commencez par ajouter votre premier stage ou alternance</p>
+				<a href="{{ path('admin_internship_new') }}" class="btn btn-primary">Ajouter un stage</a>
+			</div>
+		{% else %}
+			<div class="admin-table-container">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							<th>Titre</th>
+							<th>Entreprise</th>
+							<th>Année</th>
+							<th>Période</th>
+							<th>Projets</th>
+							<th>Visible</th>
+							<th>Ordre</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for internship in internships %}
+							<tr id="internship-{{ internship.id }}">
+								<td>
+									<strong>{{ internship.title }}</strong>
+								</td>
+								<td>{{ internship.company }}</td>
+								<td>{{ internship.year }}</td>
+								<td>
+									{{ internship.startDate ? internship.startDate.format('d/m/Y') : '-' }}
+									→
+									{{ internship.endDate ? internship.endDate.format('d/m/Y') : 'En cours' }}
+								</td>
+								<td>{{ internship.projects|length }}</td>
+								<td>
+									{% if internship.isVisible %}
+										<span class="badge badge-success">Oui</span>
+									{% else %}
+										<span class="badge badge-secondary">Non</span>
+									{% endif %}
+								</td>
+								<td>{{ internship.displayOrder }}</td>
+								<td>
+									<div class="admin-table-actions">
+										<a href="{{ path('admin_internship_edit', {id: internship.id}) }}" class="admin-table-action" title="Modifier">
+											<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+												<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+											</svg>
+										</a>
+										<button
+											type="button"
+											class="admin-table-action admin-table-action-danger delete-internship-btn"
+											data-internship-id="{{ internship.id }}"
+											title="Supprimer">
+											<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<polyline points="3 6 5 6 21 6"></polyline>
+												<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+											</svg>
+										</button>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+{% block javascripts %}
+	<script nonce="{{ csp_nonce() }}">
+	document.addEventListener('DOMContentLoaded', function() {
+		const deleteButtons = document.querySelectorAll('.delete-internship-btn');
+		deleteButtons.forEach(function(button) {
+			button.addEventListener('click', async function() {
+				const id = this.dataset.internshipId;
+				if (!confirm('Voulez-vous vraiment supprimer ce stage ?')) return;
+				try {
+					const response = await fetch(`/admin/internships/${id}/delete`, {method: 'POST'});
+					if (response.ok) {
+						const row = document.getElementById(`internship-${id}`);
+						if (row) row.remove();
+					}
+				} catch (error) {
+					alert('Erreur lors de la suppression.');
+				}
+			});
+		});
+	});
+	</script>
+{% endblock %}

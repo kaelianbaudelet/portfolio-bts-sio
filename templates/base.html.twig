@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			Kaelian —
+			{% block title %}{% endblock %}
+		</title>
+
+		<!-- Preloader CSS - Chargé en premier -->
+		<style>:root
+		{
+			--bg-primary: #ffffff;
+			--bg-secondary: #f8f9fa;
+			--text-secondary: #6c757d;
+			--accent-color: #0ea5e9;
+			--border-color: #dee2e6;
+		}
+
+		[data-theme="dark"] {
+			--bg-primary: #1a1a1a;
+			--bg-secondary: #2d2d2d;
+			--text-secondary: #adb5bd;
+			--accent-color: #0ea5e9;
+			--border-color: #495057;
+		}
+
+		.page-preloader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: var(--bg-primary);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 9999;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.5s ease, visibility 0.5s ease;
+		}
+
+		.page-preloader.hidden {
+			opacity: 0;
+			visibility: hidden;
+		}
+
+		.page-preloader-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 1.5rem;
+		}
+
+		.page-preloader .spinner {
+			width: 48px;
+			height: 48px;
+			border: 4px solid var(--border-color);
+			border-top-color: var(--accent-color);
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+		}
+
+		.page-preloader p {
+			color: var(--text-secondary);
+			font-size: 1rem;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		}
+
+		@keyframes spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+	</style>
+
+	<!-- Preloader JS - Exécuté immédiatement -->
+	<script nonce="{{ csp_nonce() }}">
+		// Appliquer le thème immédiatement
+const savedTheme = localStorage.getItem("theme") || "light";
+document.documentElement.setAttribute("data-theme", savedTheme);
+
+// Gestion du preloader
+const preloaderState = {
+visible: false,
+loaded: false
+};
+
+// Montrer le preloader seulement si le chargement prend plus de 200ms
+const showTimer = setTimeout(() => {
+if (! preloaderState.loaded) {
+const preloader = document.getElementById("pagePreloader");
+if (preloader) {
+preloader.style.opacity = "1";
+preloader.style.visibility = "visible";
+preloaderState.visible = true;
+}
+}
+}, 300);
+
+// Cacher le preloader quand la page est chargée
+window.addEventListener("load", () => {
+preloaderState.loaded = true;
+clearTimeout(showTimer);
+
+const preloader = document.getElementById("pagePreloader");
+if (preloader) {
+if (preloaderState.visible) {
+const minDisplayTime = 500;
+const elapsedTime = performance.now();
+const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+setTimeout(() => {
+preloader.classList.add("hidden");
+setTimeout(() => {
+preloader.remove();
+}, 500);
+}, remainingTime);
+} else { // Sinon, supprimer immédiatement
+preloader.remove();
+}
+}
+});
+	</script>
+
+	<link rel="icon" href="{{ asset('assets/favicons/favicon.ico') }}">
+	<link rel="stylesheet" href="{{ asset('assets/styles/app.css') }}"> {% block stylesheets %}{% endblock %}
+	</head>
+	<body>
+		<!-- Page Preloader -->
+		<div id="pagePreloader" class="page-preloader">
+			<div class="page-preloader-content">
+				<div class="spinner"></div>
+				<p>Chargement...</p>
+			</div>
+		</div>
+
+		<header class="header">
+			<div class="container">
+				<nav class="nav">
+					<a href="{{ path('app_home') }}" class="logo">Kaelian</a>
+					<div class="nav-right">
+						<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+							<svg class="sun-icon" width="24px" height="24px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z" fill="currentColor"/>
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C12.4142 1.25 12.75 1.58579 12.75 2V4C12.75 4.41421 12.4142 4.75 12 4.75C11.5858 4.75 11.25 4.41421 11.25 4V2C11.25 1.58579 11.5858 1.25 12 1.25ZM3.66865 3.71609C3.94815 3.41039 4.42255 3.38915 4.72825 3.66865L6.95026 5.70024C7.25596 5.97974 7.2772 6.45413 6.9977 6.75983C6.7182 7.06553 6.2438 7.08677 5.9381 6.80727L3.71609 4.77569C3.41039 4.49619 3.38915 4.02179 3.66865 3.71609ZM20.3314 3.71609C20.6109 4.02179 20.5896 4.49619 20.2839 4.77569L18.0619 6.80727C17.7562 7.08677 17.2818 7.06553 17.0023 6.75983C16.7228 6.45413 16.744 5.97974 17.0497 5.70024L19.2718 3.66865C19.5775 3.38915 20.0518 3.41039 20.3314 3.71609ZM1.25 12C1.25 11.5858 1.58579 11.25 2 11.25H4C4.41421 11.25 4.75 11.5858 4.75 12C4.75 12.4142 4.41421 12.75 4 12.75H2C1.58579 12.75 1.25 12.4142 1.25 12ZM19.25 12C19.25 11.5858 19.5858 11.25 20 11.25H22C22.4142 11.25 22.75 11.5858 22.75 12C22.75 12.4142 22.4142 12.75 22 12.75H20C19.5858 12.75 19.25 12.4142 19.25 12ZM17.0255 17.0252C17.3184 16.7323 17.7933 16.7323 18.0862 17.0252L20.3082 19.2475C20.6011 19.5404 20.601 20.0153 20.3081 20.3082C20.0152 20.6011 19.5403 20.601 19.2475 20.3081L17.0255 18.0858C16.7326 17.7929 16.7326 17.3181 17.0255 17.0252ZM6.97467 17.0253C7.26756 17.3182 7.26756 17.7931 6.97467 18.086L4.75244 20.3082C4.45955 20.6011 3.98468 20.6011 3.69178 20.3082C3.39889 20.0153 3.39889 19.5404 3.69178 19.2476L5.91401 17.0253C6.2069 16.7324 6.68177 16.7324 6.97467 17.0253ZM12 19.25C12.4142 19.25 12.75 19.5858 12.75 20V22C12.75 22.4142 12.4142 22.75 12 22.75C11.5858 22.75 11.25 22.4142 11.25 22V20C11.25 19.5858 11.5858 19.25 12 19.25Z" fill="currentColor"/>
+							</svg>
+							<svg class="moon-icon" width="24px" height="24px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M19.9001 2.30719C19.7392 1.8976 19.1616 1.8976 19.0007 2.30719L18.5703 3.40247C18.5212 3.52752 18.4226 3.62651 18.298 3.67583L17.2067 4.1078C16.7986 4.26934 16.7986 4.849 17.2067 5.01054L18.298 5.44252C18.4226 5.49184 18.5212 5.59082 18.5703 5.71587L19.0007 6.81115C19.1616 7.22074 19.7392 7.22074 19.9001 6.81116L20.3305 5.71587C20.3796 5.59082 20.4782 5.49184 20.6028 5.44252L21.6941 5.01054C22.1022 4.849 22.1022 4.26934 21.6941 4.1078L20.6028 3.67583C20.4782 3.62651 20.3796 3.52752 20.3305 3.40247L19.9001 2.30719Z" fill="currentColor"/>
+								<path d="M16.0328 8.12967C15.8718 7.72009 15.2943 7.72009 15.1333 8.12967L14.9764 8.52902C14.9273 8.65407 14.8287 8.75305 14.7041 8.80237L14.3062 8.95987C13.8981 9.12141 13.8981 9.70107 14.3062 9.86261L14.7041 10.0201C14.8287 10.0694 14.9273 10.1684 14.9764 10.2935L15.1333 10.6928C15.2943 11.1024 15.8718 11.1024 16.0328 10.6928L16.1897 10.2935C16.2388 10.1684 16.3374 10.0694 16.462 10.0201L16.8599 9.86261C17.268 9.70107 17.268 9.12141 16.8599 8.95987L16.462 8.80237C16.3374 8.75305 16.2388 8.65407 16.1897 8.52902L16.0328 8.12967Z" fill="currentColor"/>
+								<path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
+							</svg>
+						</button>
+						<button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+							<svg class="hamburger-icon" width="24px" height="24px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+							</svg>
+							<svg class="close-icon" width="24px" height="24px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+							</svg>
+						</button>
+					</div>
+					<ul class="nav-menu" id="navMenu">
+						<a href="{{ path('app_home') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">
+							Accueil
+						</a>
+						<a href="{{ path('app_about') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}">
+							A propos
+						</a>
+						<a href="{{ path('app_skills') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_skills' %}active{% endif %}">
+							Compétences
+						</a>
+						<a href="{{ path('app_internships') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_internships' %}active{% endif %}">
+							Stages
+						</a>
+						<a href="{{ path('app_certifications') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_certifications' %}active{% endif %}">
+							Certifications
+						</a>
+						<a href="{{ path('app_tech_watch') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_tech_watch' %}active{% endif %}">
+							Veille
+						</a>
+						<a href="{{ path('app_projects') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_projects' %}active{% endif %}">
+							Projets
+						</a>
+						<a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">
+							Contact
+						</a>
+					</ul>
+				</nav>
+			</div>
+		</header>
+		{% block body %}{% endblock %}
+		<script src="{{ asset('assets/scripts/app.js') }}" defer></script>
+		{% block javascripts %}{% endblock %}
+	</body>
+	<footer class="footer">
+		<div class="container">
+			<div class="footer-content">
+				<p class="footer-text">Portfolio BTS SIO — &copy; 2026 Kaelian. Tous droits réservés.</p>
+				<div class="footer-links">
+					<a href="{{ path('app_sitemap') }}" class="footer-link">Plan du site</a>
+					<span class="footer-separator">•</span>
+					<a href="{{ path('app_legals') }}" class="footer-link">Mentions Légales</a>
+					<span class="footer-separator">•</span>
+					<a href="{{ path('app_privacy') }}" class="footer-link">Politique de Confidentialité</a>
+				</div>
+				<div class="social-links">
+					<a href="https://x.com/kaelianbaudelet" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="X (Twitter)">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+							<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+						</svg>
+					</a>
+					<a href="https://linkedin.com/in/kaelianbaudelet" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+							<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
+						</svg>
+					</a>
+					<a href="https://github.com/kaelianbaudelet" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+						<svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+							<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+						</svg>
+					</a>
+
+				</div>
+			</div>
+		</div>
+	</footer>
+</html>
