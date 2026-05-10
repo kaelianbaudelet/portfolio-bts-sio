@@ -3,43 +3,6 @@
 {% block title %}Compétences BTS SIO
 {% endblock %}
 
-{% block stylesheets %}
-	{{ parent() }}
-	<style>
-		.excel-table-container {
-			width: 100%;
-			overflow-x: auto;
-			background: var(--bg-primary);
-			border-radius: 0.5rem;
-			box-shadow: var(--shadow-inner);
-		}
-		.excel-table-container table {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 0.85rem;
-			color: var(--text-primary);
-		}
-		.excel-table-container th, .excel-table-container td {
-			border: 1px solid var(--border-color);
-			padding: 0.75rem;
-			text-align: left;
-			min-width: 120px;
-		}
-		.excel-table-container tr:nth-child(even) {
-			background-color: var(--bg-secondary);
-		}
-		.excel-table-container tr:hover {
-			background-color: var(--bg-tertiary);
-		}
-		.excel-loading {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-			padding: 3rem;
-			color: var(--text-secondary);
-		}
-	</style>
 {% endblock %}
 
 {% block body %}
@@ -122,18 +85,12 @@
 				<i class="fas fa-times"></i>
 			</button>
 		</div>
-		<div class="modal-body" style="padding: 1rem; overflow: auto;">
-			<div id="excelPreviewContent" class="excel-table-container">
-				<div class="excel-loading">
-					<i class="fas fa-spinner fa-spin fa-2x"></i>
-					<p>Chargement du tableau de compétences...</p>
-				</div>
-			</div>
+		<div class="modal-body" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
+			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: var(--shadow-lg);">
 		</div>
 	</div>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js" nonce="{{ csp_nonce() }}"></script>
 
 <script  nonce="{{ csp_nonce() }}" >
 	document.addEventListener('DOMContentLoaded', function() {
@@ -192,41 +149,10 @@
 					const previewSkillsBtn = document.getElementById('previewSkillsBtn');
 					const skillsPreviewModal = document.getElementById('skillsPreviewModal');
 					const previewModalClose = document.getElementById('previewModalClose');
-					const excelPreviewContent = document.getElementById('excelPreviewContent');
-					let excelLoaded = false;
 
 					if (previewSkillsBtn && skillsPreviewModal) {
-						previewSkillsBtn.addEventListener('click', async function() {
+						previewSkillsBtn.addEventListener('click', function() {
 							skillsPreviewModal.classList.add('active');
-							
-							if (!excelLoaded) {
-								try {
-									const response = await fetch('/tableau_de_synthese_epreuve_e5.xlsx');
-									const data = await response.arrayBuffer();
-									const workbook = XLSX.read(data, { type: 'array' });
-									
-									// Get first worksheet
-									const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-									
-									// Convert to HTML
-									const html = XLSX.utils.sheet_to_html(worksheet, {
-										editable: false,
-										header: '',
-										footer: ''
-									});
-									
-									excelPreviewContent.innerHTML = html;
-									excelLoaded = true;
-								} catch (error) {
-									console.error('Error loading excel:', error);
-									excelPreviewContent.innerHTML = `
-										<div class="excel-loading" style="color: #ef4444;">
-											<i class="fas fa-exclamation-circle fa-2x"></i>
-											<p>Erreur lors du chargement du tableau de compétences. Veuillez réessayer ou télécharger le fichier.</p>
-										</div>
-									`;
-								}
-							}
 						});
 
 						previewModalClose.addEventListener('click', function() {
