@@ -8,20 +8,20 @@
 	<style>
 		.modal-preview-image {
 			cursor: zoom-in;
-			transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			max-width: 100%;
+			transition: all 0.3s ease;
+			width: 100%;
 			height: auto;
 			border-radius: 0.5rem;
 			box-shadow: var(--shadow-lg);
-			transform-origin: center center;
 		}
 		.modal-preview-image.zoomed {
 			cursor: zoom-out;
-			transform: scale(2);
+			width: 250%; /* Grow to 2.5x to trigger scrollbars */
 			max-width: none;
 		}
 		.modal-body.is-zoomed {
-			display: block !important; /* Allow scrolling instead of centering */
+			display: block !important;
+			padding: 0 !important;
 		}
 	</style>
 {% endblock %}
