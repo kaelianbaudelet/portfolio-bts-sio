@@ -3,33 +3,6 @@
 {% block title %}Compétences BTS SIO
 {% endblock %}
 
-{% block stylesheets %}
-	{{ parent() }}
-	<style>
-		.modal-body-preview {
-			padding: 0 !important;
-			overflow: auto !important;
-			display: block !important;
-			text-align: center;
-			background: rgba(0,0,0,0.2);
-			height: 100%;
-		}
-		.modal-preview-image {
-			cursor: zoom-in;
-			transition: width 0.3s ease;
-			width: 100%;
-			max-width: 100%;
-			height: auto;
-			display: inline-block;
-			vertical-align: middle;
-			border-radius: 0.5rem;
-		}
-		.modal-preview-image.zoomed {
-			cursor: zoom-out;
-			width: 300%; /* Even bigger zoom for better detail */
-			max-width: none;
-		}
-	</style>
 {% endblock %}
 
 {% block body %}
@@ -112,8 +85,8 @@
 				<i class="fas fa-times"></i>
 			</button>
 		</div>
-		<div class="modal-body modal-body-preview" id="previewModalBody">
-			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" class="modal-preview-image" id="previewImage">
+		<div class="modal-body" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
+			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: var(--shadow-lg);">
 		</div>
 	</div>
 </div>
@@ -184,71 +157,13 @@
 
 						previewModalClose.addEventListener('click', function() {
 							skillsPreviewModal.classList.remove('active');
-							// Reset zoom when closing
-							if (previewImage) {
-								previewImage.classList.remove('zoomed');
-								previewModalBody.classList.remove('is-zoomed');
-							}
 						});
 
 						skillsPreviewModal.addEventListener('click', function(e) {
 							if (e.target === skillsPreviewModal) {
 								skillsPreviewModal.classList.remove('active');
-								// Reset zoom when closing
-								if (previewImage) {
-									previewImage.classList.remove('zoomed');
-									previewModalBody.classList.remove('is-zoomed');
-								}
 							}
 						});
-
-						// Zoom logic
-						const previewImage = document.getElementById('previewImage');
-						const previewModalBody = document.getElementById('previewModalBody');
-
-						if (previewImage) {
-							previewImage.addEventListener('click', function(e) {
-								e.stopPropagation();
-								
-								const container = previewModalBody;
-								const isZoomingIn = !this.classList.contains('zoomed');
-								
-								if (isZoomingIn) {
-									// Precise click coordinates relative to the image
-									const xPercent = e.offsetX / this.offsetWidth;
-									const yPercent = e.offsetY / this.offsetHeight;
-									
-									// Capture current dimensions to calculate final target
-									const currentWidth = this.offsetWidth;
-									const currentHeight = this.offsetHeight;
-									
-									this.classList.add('zoomed');
-									
-									// Target is 300% (based on CSS)
-									const targetWidth = currentWidth * 3;
-									const targetHeight = currentHeight * 3;
-									
-									const scrollX = (xPercent * targetWidth) - (container.clientWidth / 2);
-									const scrollY = (yPercent * targetHeight) - (container.clientHeight / 2);
-									
-									// Small timeout to let the class apply and layout adjust
-									setTimeout(() => {
-										container.scrollTo({
-											left: scrollX,
-											top: scrollY,
-											behavior: 'smooth'
-										});
-									}, 20);
-								} else {
-									this.classList.remove('zoomed');
-									container.scrollTo({
-										left: 0,
-										top: 0,
-										behavior: 'smooth'
-									});
-								}
-							});
-						}
 					}
 
 					// Auto-ouvrir le modal si skillId est dans l'URL
