@@ -22,7 +22,6 @@
 		.modal-body.is-zoomed {
 			display: block !important;
 			padding: 0 !important;
-			scroll-behavior: smooth;
 		}
 	</style>
 {% endblock %}
@@ -206,6 +205,7 @@
 								e.stopPropagation();
 								
 								const isZoomingIn = !this.classList.contains('zoomed');
+								const container = previewModalBody;
 								
 								if (isZoomingIn) {
 									// Calculate click position relative to image (%)
@@ -213,21 +213,34 @@
 									const xPercent = (e.clientX - rect.left) / rect.width;
 									const yPercent = (e.clientY - rect.top) / rect.height;
 									
+									// Switch classes first
 									this.classList.add('zoomed');
-									previewModalBody.classList.add('is-zoomed');
+									container.classList.add('is-zoomed');
 									
-									// Delay scroll adjustment to allow the width transition to start
-									// We use requestAnimationFrame or a small timeout to align with the transition
-									setTimeout(() => {
-										const newWidth = this.offsetWidth;
-										const newHeight = this.offsetHeight;
+									// We need to wait for the DOM to update to get the new dimensions
+									// or better, calculate them: original width * 2.5
+									// But let's just wait a frame
+									requestAnimationFrame(() => {
+										const newWidth = this.scrollWidth;
+										const newHeight = this.scrollHeight;
 										
-										previewModalBody.scrollLeft = (xPercent * newWidth) - (previewModalBody.clientWidth / 2);
-										previewModalBody.scrollTop = (yPercent * newHeight) - (previewModalBody.clientHeight / 2);
-									}, 50);
+										const scrollX = (xPercent * newWidth) - (container.clientWidth / 2);
+										const scrollY = (yPercent * newHeight) - (container.clientHeight / 2);
+										
+										container.scrollTo({
+											left: scrollX,
+											top: scrollY,
+											behavior: 'smooth'
+										});
+									});
 								} else {
 									this.classList.remove('zoomed');
-									previewModalBody.classList.remove('is-zoomed');
+									container.classList.remove('is-zoomed');
+									container.scrollTo({
+										left: 0,
+										top: 0,
+										behavior: 'smooth'
+									});
 								}
 							});
 						}
