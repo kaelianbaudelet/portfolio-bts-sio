@@ -79,9 +79,14 @@
 	<div class="modal-dialog" style="max-width: 1200px;">
 		<div class="modal-header">
 			<h2 class="modal-title">Tableau de synthèse - Epreuve E5</h2>
-			<button class="modal-close" id="previewModalClose">
-				<i class="fas fa-times"></i>
-			</button>
+			<div style="display: flex; align-items: center; gap: 1rem;">
+				<button class="modal-close" id="fullscreenBtn" title="Plein écran" style="position: static; font-size: 1.2rem;">
+					<i class="fas fa-expand"></i>
+				</button>
+				<button class="modal-close" id="previewModalClose" style="position: static;">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
 		</div>
 		<div class="modal-body" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
 			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: var(--shadow-lg);">
@@ -153,9 +158,24 @@
 							skillsPreviewModal.classList.add('active');
 						});
 
+						const fullscreenBtn = document.getElementById('fullscreenBtn');
+						const previewImage = document.querySelector('#skillsPreviewModal img');
+
 						previewModalClose.addEventListener('click', function() {
 							skillsPreviewModal.classList.remove('active');
 						});
+
+						if (fullscreenBtn && previewImage) {
+							fullscreenBtn.addEventListener('click', function() {
+								if (previewImage.requestFullscreen) {
+									previewImage.requestFullscreen();
+								} else if (previewImage.webkitRequestFullscreen) { /* Safari */
+									previewImage.webkitRequestFullscreen();
+								} else if (previewImage.msRequestFullscreen) { /* IE11 */
+									previewImage.msRequestFullscreen();
+								}
+							});
+						}
 
 						skillsPreviewModal.addEventListener('click', function(e) {
 							if (e.target === skillsPreviewModal) {
