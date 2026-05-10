@@ -3,6 +3,29 @@
 {% block title %}Compétences BTS SIO
 {% endblock %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.modal-preview-image {
+			cursor: zoom-in;
+			transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			max-width: 100%;
+			height: auto;
+			border-radius: 0.5rem;
+			box-shadow: var(--shadow-lg);
+			transform-origin: center center;
+		}
+		.modal-preview-image.zoomed {
+			cursor: zoom-out;
+			transform: scale(2);
+			max-width: none;
+		}
+		.modal-body.is-zoomed {
+			display: block !important; /* Allow scrolling instead of centering */
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
 <main class="main">
 	<section class="page-hero">
@@ -83,8 +106,8 @@
 				<i class="fas fa-times"></i>
 			</button>
 		</div>
-		<div class="modal-body" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
-			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: var(--shadow-lg);">
+		<div class="modal-body" id="previewModalBody" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
+			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" class="modal-preview-image" id="previewImage">
 		</div>
 	</div>
 </div>
@@ -155,13 +178,35 @@
 
 						previewModalClose.addEventListener('click', function() {
 							skillsPreviewModal.classList.remove('active');
+							// Reset zoom when closing
+							if (previewImage) {
+								previewImage.classList.remove('zoomed');
+								previewModalBody.classList.remove('is-zoomed');
+							}
 						});
 
 						skillsPreviewModal.addEventListener('click', function(e) {
 							if (e.target === skillsPreviewModal) {
 								skillsPreviewModal.classList.remove('active');
+								// Reset zoom when closing
+								if (previewImage) {
+									previewImage.classList.remove('zoomed');
+									previewModalBody.classList.remove('is-zoomed');
+								}
 							}
 						});
+
+						// Zoom logic
+						const previewImage = document.getElementById('previewImage');
+						const previewModalBody = document.getElementById('previewModalBody');
+
+						if (previewImage) {
+							previewImage.addEventListener('click', function(e) {
+								e.stopPropagation(); // Don't close modal when clicking image
+								this.classList.toggle('zoomed');
+								previewModalBody.classList.toggle('is-zoomed');
+							});
+						}
 					}
 
 					// Auto-ouvrir le modal si skillId est dans l'URL
