@@ -34,7 +34,7 @@
 				{% endfor %}
 			</div>
 
-			<div class="skills-download-section fade-up delay-700">
+			<div class="skills-download-section fade-up delay-700" style="display: flex; flex-direction: column; gap: 1rem;">
 				<a href="{{ asset('tableau_de_synthese_epreuve_e5.xlsx') }}" class="btn btn-primary btn-large btn-block" id="downloadSkillsBtn" download>
 					<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -43,6 +43,13 @@
 					</svg>
 					Télécharger mon tableau de compétences
 				</a>
+				<button type="button" class="btn btn-secondary btn-large btn-block" id="previewSkillsBtn">
+					<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+						<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+						<circle cx="12" cy="12" r="3"></circle>
+					</svg>
+					Consulter mon tableau de compétences
+				</button>
 			</div>
 		</div>
 	</section>
@@ -63,6 +70,21 @@
 			<div class="modal-projects-list fade-up delay-500" id="modalProjectsList">
 				<div class="loading">Chargement...</div>
 			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for skills preview -->
+<div class="image-selector-modal" id="skillsPreviewModal">
+	<div class="modal-dialog" style="max-width: 1200px;">
+		<div class="modal-header">
+			<h2 class="modal-title">Tableau de synthèse - Epreuve E5</h2>
+			<button class="modal-close" id="previewModalClose">
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+		<div class="modal-body" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
+			<img src="{{ asset('uploads/portfolio-kaelian-epreuve-e5-69ee34dd876cd.png') }}" alt="Tableau de compétences" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: var(--shadow-lg);">
 		</div>
 	</div>
 </div>
@@ -119,6 +141,27 @@
 							modal.classList.remove('active');
 						}
 					});
+
+					// Logic for Skills Preview Modal
+					const previewSkillsBtn = document.getElementById('previewSkillsBtn');
+					const skillsPreviewModal = document.getElementById('skillsPreviewModal');
+					const previewModalClose = document.getElementById('previewModalClose');
+
+					if (previewSkillsBtn && skillsPreviewModal) {
+						previewSkillsBtn.addEventListener('click', function() {
+							skillsPreviewModal.classList.add('active');
+						});
+
+						previewModalClose.addEventListener('click', function() {
+							skillsPreviewModal.classList.remove('active');
+						});
+
+						skillsPreviewModal.addEventListener('click', function(e) {
+							if (e.target === skillsPreviewModal) {
+								skillsPreviewModal.classList.remove('active');
+							}
+						});
+					}
 
 					// Auto-ouvrir le modal si skillId est dans l'URL
 					const urlParams = new URLSearchParams(window.location.search);
