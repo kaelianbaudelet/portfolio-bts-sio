@@ -22,6 +22,7 @@
 		.modal-body.is-zoomed {
 			display: block !important;
 			padding: 0 !important;
+			scroll-behavior: smooth;
 		}
 	</style>
 {% endblock %}
@@ -202,9 +203,32 @@
 
 						if (previewImage) {
 							previewImage.addEventListener('click', function(e) {
-								e.stopPropagation(); // Don't close modal when clicking image
-								this.classList.toggle('zoomed');
-								previewModalBody.classList.toggle('is-zoomed');
+								e.stopPropagation();
+								
+								const isZoomingIn = !this.classList.contains('zoomed');
+								
+								if (isZoomingIn) {
+									// Calculate click position relative to image (%)
+									const rect = this.getBoundingClientRect();
+									const xPercent = (e.clientX - rect.left) / rect.width;
+									const yPercent = (e.clientY - rect.top) / rect.height;
+									
+									this.classList.add('zoomed');
+									previewModalBody.classList.add('is-zoomed');
+									
+									// Delay scroll adjustment to allow the width transition to start
+									// We use requestAnimationFrame or a small timeout to align with the transition
+									setTimeout(() => {
+										const newWidth = this.offsetWidth;
+										const newHeight = this.offsetHeight;
+										
+										previewModalBody.scrollLeft = (xPercent * newWidth) - (previewModalBody.clientWidth / 2);
+										previewModalBody.scrollTop = (yPercent * newHeight) - (previewModalBody.clientHeight / 2);
+									}, 50);
+								} else {
+									this.classList.remove('zoomed');
+									previewModalBody.classList.remove('is-zoomed');
+								}
 							});
 						}
 					}
