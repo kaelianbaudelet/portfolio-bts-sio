@@ -208,31 +208,31 @@
 								const container = previewModalBody;
 								
 								if (isZoomingIn) {
-									// Calculate click position relative to image (%)
+									// Calculate click position relative to image (%) BEFORE zoom
 									const rect = this.getBoundingClientRect();
 									const xPercent = (e.clientX - rect.left) / rect.width;
 									const yPercent = (e.clientY - rect.top) / rect.height;
 									
-									// Switch classes first
+									// Calculate what the dimensions WILL be (250% of container)
+									const containerWidth = container.clientWidth;
+									const finalWidth = containerWidth * 2.5;
+									const finalHeight = (finalWidth / rect.width) * rect.height;
+									
 									this.classList.add('zoomed');
 									container.classList.add('is-zoomed');
 									
-									// We need to wait for the DOM to update to get the new dimensions
-									// or better, calculate them: original width * 2.5
-									// But let's just wait a frame
-									requestAnimationFrame(() => {
-										const newWidth = this.scrollWidth;
-										const newHeight = this.scrollHeight;
-										
-										const scrollX = (xPercent * newWidth) - (container.clientWidth / 2);
-										const scrollY = (yPercent * newHeight) - (container.clientHeight / 2);
-										
+									// Centering calculation
+									const scrollX = (xPercent * finalWidth) - (containerWidth / 2);
+									const scrollY = (yPercent * finalHeight) - (container.clientHeight / 2);
+									
+									// Use a slightly longer timeout to ensure 'is-zoomed' block layout is active
+									setTimeout(() => {
 										container.scrollTo({
 											left: scrollX,
 											top: scrollY,
 											behavior: 'smooth'
 										});
-									});
+									}, 10);
 								} else {
 									this.classList.remove('zoomed');
 									container.classList.remove('is-zoomed');
