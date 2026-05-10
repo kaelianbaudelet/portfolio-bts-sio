@@ -6,22 +6,28 @@
 {% block stylesheets %}
 	{{ parent() }}
 	<style>
+		.modal-body-preview {
+			padding: 0 !important;
+			overflow: auto !important;
+			display: block !important;
+			text-align: center;
+			background: rgba(0,0,0,0.2);
+			height: 100%;
+		}
 		.modal-preview-image {
 			cursor: zoom-in;
-			transition: all 0.3s ease;
+			transition: width 0.3s ease;
 			width: 100%;
+			max-width: 100%;
 			height: auto;
+			display: inline-block;
+			vertical-align: middle;
 			border-radius: 0.5rem;
-			box-shadow: var(--shadow-lg);
 		}
 		.modal-preview-image.zoomed {
 			cursor: zoom-out;
-			width: 250%; /* Grow to 2.5x to trigger scrollbars */
+			width: 300%; /* Even bigger zoom for better detail */
 			max-width: none;
-		}
-		.modal-body.is-zoomed {
-			display: block !important;
-			padding: 0 !important;
 		}
 	</style>
 {% endblock %}
@@ -106,7 +112,7 @@
 				<i class="fas fa-times"></i>
 			</button>
 		</div>
-		<div class="modal-body" id="previewModalBody" style="padding: 1rem; overflow: auto; display: flex; justify-content: center;">
+		<div class="modal-body modal-body-preview" id="previewModalBody">
 			<img src="{{ asset('tableau_de_synthese_epreuve_e5.png') }}" alt="Tableau de compétences" class="modal-preview-image" id="previewImage">
 		</div>
 	</div>
@@ -204,38 +210,37 @@
 							previewImage.addEventListener('click', function(e) {
 								e.stopPropagation();
 								
-								const isZoomingIn = !this.classList.contains('zoomed');
 								const container = previewModalBody;
+								const isZoomingIn = !this.classList.contains('zoomed');
 								
 								if (isZoomingIn) {
-									// Calculate click position relative to image (%) BEFORE zoom
-									const rect = this.getBoundingClientRect();
-									const xPercent = (e.clientX - rect.left) / rect.width;
-									const yPercent = (e.clientY - rect.top) / rect.height;
+									// Precise click coordinates relative to the image
+									const xPercent = e.offsetX / this.offsetWidth;
+									const yPercent = e.offsetY / this.offsetHeight;
 									
-									// Calculate what the dimensions WILL be (250% of container)
-									const containerWidth = container.clientWidth;
-									const finalWidth = containerWidth * 2.5;
-									const finalHeight = (finalWidth / rect.width) * rect.height;
+									// Capture current dimensions to calculate final target
+									const currentWidth = this.offsetWidth;
+									const currentHeight = this.offsetHeight;
 									
 									this.classList.add('zoomed');
-									container.classList.add('is-zoomed');
 									
-									// Centering calculation
-									const scrollX = (xPercent * finalWidth) - (containerWidth / 2);
-									const scrollY = (yPercent * finalHeight) - (container.clientHeight / 2);
+									// Target is 300% (based on CSS)
+									const targetWidth = currentWidth * 3;
+									const targetHeight = currentHeight * 3;
 									
-									// Use a slightly longer timeout to ensure 'is-zoomed' block layout is active
+									const scrollX = (xPercent * targetWidth) - (container.clientWidth / 2);
+									const scrollY = (yPercent * targetHeight) - (container.clientHeight / 2);
+									
+									// Small timeout to let the class apply and layout adjust
 									setTimeout(() => {
 										container.scrollTo({
 											left: scrollX,
 											top: scrollY,
 											behavior: 'smooth'
 										});
-									}, 10);
+									}, 20);
 								} else {
 									this.classList.remove('zoomed');
-									container.classList.remove('is-zoomed');
 									container.scrollTo({
 										left: 0,
 										top: 0,
